@@ -259,7 +259,7 @@ local SQLObject
 local SQLDetails = {
 	Host = "kawaii.site.nfoservers.com", Port = 3306 ,
 	User = "kawaii", Pass = "9Mv8K2kmDn", -- This is default for a lot of servers, but you'll probably have to change this
-	Database = "kawaii_flow"
+	Database = "kawaii_gmodcssmovement"
 }
 
 local function SQL_Print( szMsg, varArg )
@@ -504,7 +504,7 @@ local database = {
 	port = 3306,
 	username = "kawaii",
 	password = "9Mv8K2kmDn",
-	schema = "kawaii_flow"
+	schema = "kawaii_gmodcssmovement"
 }
 
 MySQL.queries = {}
