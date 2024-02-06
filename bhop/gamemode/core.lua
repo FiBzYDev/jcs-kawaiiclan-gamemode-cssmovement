@@ -761,7 +761,7 @@ function GM:FinishMove() end
 PlayerJumps = {}
 local P1, P2 = _C.Player.ScrollPower, _C.Player.JumpPower
 
-local function PlayerGround( ply, bWater )
+local function PlayerGround( ply, inWater, onFloater, flFallSpeed )
 	if lp and ply != lp() then return end
 	if not ply.Style then ply.Style = Timer.Style or 1 end
 	
@@ -785,6 +785,8 @@ local function PlayerGround( ply, bWater )
 		end
 
 		Core:Send(observers, "jump_update", {ply, PlayerJumps[ply]})
+
+		if (flFallSpeed) > 300 then return true end
 	end
 end
 hook.Add( "OnPlayerHitGround", "HitGround", PlayerGround )
