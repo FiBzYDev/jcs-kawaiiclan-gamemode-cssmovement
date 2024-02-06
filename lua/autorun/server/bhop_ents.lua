@@ -23,7 +23,7 @@ local Boosters = {
 	["bhop_dan"] = 1.5
 }
 
-local function GroundHook( ply )
+local function GroundHook( ply, inWater, onFloater, flFallSpeed )
 	local ent = ply:GetGroundEntity()
 	if tonumber( ent:GetNWInt("Platform", 0) ) != 0 then
 		if (ent:GetClass() == "func_door" or ent:GetClass() == "func_button") and ent.BHSp and ent.BHSp > 100 then
@@ -44,6 +44,7 @@ local function GroundHook( ply )
 			end
 		end
 	end
+	if (flFallSpeed) > 300 then return true end
 end
 hook.Add( "OnPlayerHitGround", "GroundHook", GroundHook )
 
