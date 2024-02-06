@@ -1,6 +1,6 @@
 ![icon24](https://github.com/FiBzYDev/jcs-kawaiiclan-gamemode/assets/58349075/9adb96b4-0485-408e-b52e-8ec65a2391ac) 
 
-# CS:S Movement Kawaiiclan Mega Release "justa's cool server" Gamemode v1.44
+# Kawaiiclan Mega Release "justa's cool server" Gamemode v1.44
 
 Released by fibzy (https://steamcommunity.com/id/fibzysending/)
 
@@ -162,3 +162,10 @@ Note I was like only 17 at the time i was getting upset so I got my mother to ta
 Watch at your own risk*
 
 https://www.youtube.com/watch?v=ztg1WnB3-RM&list=PLvsVm4rpG66NfYEBiJCCRHcVMGu83Rk0l&index=10&ab_channel=Vehnex
+
+https://www.youtube.com/watch?v=Pk5ZZtUbcsg&ab_channel=ricky
+
+@Garry's Bhop
+3 years ago
+another legendary epic gaming video from vehnex. keep up the good work bro
+
