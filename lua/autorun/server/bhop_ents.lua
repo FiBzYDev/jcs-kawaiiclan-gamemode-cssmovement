@@ -44,7 +44,9 @@ local function GroundHook( ply, inWater, onFloater, flFallSpeed )
 			end
 		end
 	end
-	if (flFallSpeed) > 300 then return true end
+	if (CLIENT) then
+		if (flFallSpeed) > 300 then return true end
+	end
 end
 hook.Add( "OnPlayerHitGround", "GroundHook", GroundHook )
 
