@@ -12,7 +12,7 @@ local UPHILL_NEUTRAL = 1	-- Force a jump (respecting NON_JUMP_VELOCITY) (fix RNG
 
 -- Global vars
 local g_vecMins = Vector(-16.0, -16.0, 0.0)
-local g_vecMaxsUnducked = Vector(16.0, 16.0, 62.0)
+local g_vecMaxsUnducked = Vector(16.0, 16.0, 54.0)
 local g_vecMaxsDucked = Vector(16.0, 16.0, 45.0)
 local g_flDuckDelta = (g_vecMaxsUnducked.z - g_vecMaxsDucked.z) / 2
 local g_bIsSurfMap = string.StartWith(string.lower(game.GetMap()), "surf_")
