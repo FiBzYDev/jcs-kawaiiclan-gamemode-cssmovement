@@ -14,6 +14,7 @@ Original Gamemode: (https://github.com/bhopbhop/kawaiiclan-gamemode)
 Added:
 - Editable Config (fibzy)
 - Main Menu/Options Base (Niflheimrx)
+- CS:S View Twitch (Gravoius)
 - Momentum Mod Hud (justa)
 - Simple Hud (justa)
 - Crouch Boost fixes / CB Stop Time fix [This is broken on pG Gamemode] (fibzy)
