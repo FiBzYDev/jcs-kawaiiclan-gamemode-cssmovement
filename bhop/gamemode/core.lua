@@ -445,7 +445,7 @@ do
 		if ply:OnGround() then return end
 
 		-- Default CSS Bunny Hop Settings --
-		local aa, mv = 500, 30
+		local aa, mv = 1000.0, 30
 		local aim = data:GetMoveAngles(ply:GetAngles() - Angle(-100, -100, 0))
 		local forward, right = aim:Forward(), aim:Right()
 		local fmove, smove = data:GetForwardSpeed(), data:GetSideSpeed()
