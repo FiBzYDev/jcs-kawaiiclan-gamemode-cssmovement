@@ -182,7 +182,7 @@ suppress_viewpunch = {}
 suppress_viewpunch.Enabled = CreateClientConVar( "kawaii_suppress_viewpunch", "0", true, false, "Suppress viewpunch" )
 
 suppress_viewpunch_wep = {}
-suppress_viewpunch_wep.Enabled = CreateClientConVar( "kawaii_suppress_viewpunch_wep", "0", true, false, "Suppress viewpunch for weapon" )
+suppress_viewpunch_wep.Enabled = CreateClientConVar( "kawaii_suppress_viewpunch_wep_css", "1", true, false, "Suppress viewpunch for weapon" )
 
 steady_view = {}
 steady_view.Enabled = CreateClientConVar( "kawaii_steady_view", "0", true, false, "Steady weapon view not moving" )
