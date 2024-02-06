@@ -1,0 +1,6 @@
+"gamedepotsystem"
+{
+	"hl2"		"0"
+	"cstrike"		"1"
+	"tf"		"0"
+}
