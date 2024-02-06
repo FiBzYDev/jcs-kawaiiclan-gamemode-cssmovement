@@ -418,6 +418,16 @@ local function StrafeInput( ply, data )
 end
 hook.Add( "SetupMove", "StrafeInput", StrafeInput )
 
+hook.Add("SetupMove","SetMaxClientSpeed", function( ply, mv )
+	 if ply:KeyDown(IN_WALK) then 
+		 mv:SetMaxClientSpeed( 150 )
+	 end
+
+	 if ply:KeyDown(IN_DUCK) and !ply:IsFlagSet(FL_DUCKING) then 
+		 mv:SetMaxClientSpeed( 88.4 )
+	 end
+end )
+
 -- Bunny Hop Movement --
 -- The following below is movement from Flow v10.0 --
 do
