@@ -193,14 +193,6 @@ HUD.Themes = {
 
 			-- Current Vel
 			local velocity = math.floor(pl:GetVelocity():Length2D())
-	
-			if (velocity == 0) then
-				velocity = 0
-			else
-				if (velocity <= 33) then
-					velocity = 30
-				end 
-			end
 
 			-- Strings
 			local time = "Time: "
@@ -336,14 +328,6 @@ HUD.Themes = {
 		-- Current Vel
 		local velocity = math.floor(pl:GetVelocity():Length2D())
 
-		if (velocity == 0) then
-			velocity = 0
-		else
-			if (velocity <= 33) then
-				velocity = 30
-			end 
-		end
-
 		-- Jumps
 		jumps = pl.player_jumps or 0
 	
@@ -441,14 +425,6 @@ HUD.Themes = {
 					header = "Spectating"
 					pla = szStyle .. " (" .. ob:Name() .. ")"
 				end
-
-	  		 	 if (velocity == 0) then
-		 			   	velocity = 0
-	       			 else
-	    				if (velocity <= 33) then
-		  	 		 	velocity = 30
-		  			  end 
-	   			 end
 
        			 if last < velocity then
        			     coll = Color(0, 160, 200)
@@ -626,13 +602,6 @@ HUD.Themes = {
 
 		local current = LocalPlayer():GetVelocity():Length2D()
 		if not (LocalPlayer():Team() == TEAM_SPECTATOR) then 
-		if (current == 0) then
-					current = 0
-				else
-				if (current <= 33) then
-					current = 30
-				end 
-			end
 			local width = 200
 			local height = 100
 			local xPos = (ScrW() / 2) - (width / 2)
@@ -684,14 +653,6 @@ HUD.Themes = {
 					header = "Spectating"
 					pla = szStyle .. " (" .. ob:Name() .. ")"
 				end
-
-	  		 	 if (velocity == 0) then
-		 			   	velocity = 0
-	       			 else
-	    				if (velocity <= 33) then
-		  	 		 	velocity = 30
-		  			  end 
-	   			 end
 
        			 if last < velocity then
        			     coll = Color(0, 160, 200)
