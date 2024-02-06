@@ -16,7 +16,7 @@ local SCORE_THREE = Settings:GetValue("TertiaryCol")
 local SCORE_ACCENT = Settings:GetValue("AccentCol")
 
 -- Outlines?
-local outlines = Color( 45, 45, 45 )
+local outlines = Settings:GetValue("Outlines")
 
 -- Text
 local text_colour = Settings:GetValue("TextCol")
@@ -71,34 +71,34 @@ local function CreateScoreboard()
 		-- Paint
 		scoreboard.Paint = function(self, width, height)
 			-- updates
-			SCORE_ONE = Color( 32, 32, 32 )
-			SCORE_TWO = Color( 32, 32, 32 )
-			SCORE_THREE = Color( 32, 32, 32 )
-			SCORE_ACCENT = Color( 28, 152, 198 )
+			SCORE_ONE = Settings:GetValue("PrimaryCol")
+			SCORE_TWO = Settings:GetValue("SecondaryCol")
+			SCORE_THREE = Settings:GetValue("TertiaryCol")
+			SCORE_ACCENT = Settings:GetValue("AccentCol")
 
 			-- Outlines?
-			outlines = Color( 25, 25, 25 )
+			outlines = text22
 
 			-- Text
 			text_colour = Settings:GetValue("TextCol")
 			text_colour2 = Settings:GetValue("TextCol2")
-
+			text22 = Settings:GetValue("TextCol2")
 			-- Main
 			surface.SetDrawColor(SCORE_ONE)
 			surface.DrawRect(0, 0, width, height)
-			surface.SetDrawColor(Color( 25, 25, 25 ))
+			surface.SetDrawColor(text22)
 
 			if outlines then
 				surface.DrawOutlinedRect(0, 0, width, height, 10)
 			end
 
-			surface.SetDrawColor(Color( 25, 25, 25 ))
+			surface.SetDrawColor(text22)
 			surface.DrawRect(0, 0, width, 35)
 
-			surface.SetDrawColor(Color( 25, 25, 25 ))
+			surface.SetDrawColor(text22)
 			surface.DrawRect(0, 124, width, 10)
 
-			surface.SetDrawColor(Color( 25, 25, 25 ))
+			surface.SetDrawColor(text22)
 			surface.DrawRect(0, 600, width, 35)
 
 			-- Title

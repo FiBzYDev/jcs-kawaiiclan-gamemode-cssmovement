@@ -8,6 +8,7 @@ local accent = Settings:Register("AccentCol", Color(80, 30, 40, 170))
 local outlines = Settings:Register("Outlines", true) and color_black or Color(0, 0, 0, 0)
 local text = Settings:Register("TextCol", color_white)
 local text2 = Settings:Register("TextCol2", Color(200, 200, 200))
+local text22 = Settings:Register("TextCol24", Color(25, 25, 25))
 
 Settings:Register("StartZone", Color( 0, 230, 0, 255 ))
 Settings:Register("EndZone", Color( 180, 0, 0, 255 ))

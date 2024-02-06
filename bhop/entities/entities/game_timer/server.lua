@@ -13,6 +13,7 @@ local Zone = {
 	LS = 100,
 	SOILDAC = 120,
 	SURFGRAVTY = 122,
+	STEPSIZE = 123,
 }
 
 function ENT:Initialize()
@@ -62,6 +63,8 @@ function ENT:StartTouch(ent)
 		ent:ResetTimer()
 	elseif (zone == Zone.SURFGRAVTY) then
 		ent:SetGravity(0.6)
+	elseif (zone == Zone.STEPSIZE) then
+		ent:SetStepSize(6)
 	elseif (zone == Zone.LS) then
 		ent:SetLegitSpeed(self.speed)
 	elseif (zone == Zone.SOILDAC) then
@@ -128,5 +131,7 @@ function ENT:EndTouch(ent)
 		ent:StartTimer()
 	elseif (zone == Zone.BStart) and (not ent.Tb) then
 		ent:BonusStart()
+	elseif (zone == Zone.STEPSIZE) then 
+		ent:SetStepSize(18)
 	end
 end

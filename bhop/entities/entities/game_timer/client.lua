@@ -11,7 +11,7 @@ local Zone = {
 }
 
 local DrawArea = {
-	[Zone.MStart] = Color( 0, 255, 0 ),
+	[Zone.MStart] = Settings:GetValue("StartZone"),
 	[Zone.MEnd] = Settings:GetValue("EndZone"),
 	[Zone.BStart] = Settings:GetValue("BonusStart"),
 	[Zone.BEnd] = Settings:GetValue("BonusEnd"),
@@ -46,7 +46,7 @@ function ENT:Draw()
 	if !ZONES then return end
 
 	-- Color refresh
-	DrawArea[Zone.MStart] = Color( 0, 255, 0 )
+	DrawArea[Zone.MStart] = Settings:GetValue("StartZone")
 	DrawArea[Zone.MEnd] = Settings:GetValue("EndZone")
 	DrawArea[Zone.BStart] = Settings:GetValue("BonusStart")
 	DrawArea[Zone.BEnd] = Settings:GetValue("BonusEnd")

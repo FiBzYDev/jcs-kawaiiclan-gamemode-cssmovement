@@ -12,6 +12,7 @@ Zones.Type = {
 	["SoildAC"] = 120,
 	["Helper"] = 130,
 	["Gravity Zone"] = 122,
+	["Step Size"] = 123,
 }
 
 Zones.Options = {

@@ -14,7 +14,6 @@ function Player:Spawn( ply )
 	ply:SetJumpPower( _C["Player"].JumpPower )
 	ply:SetHull( _C["Player"].HullMin, _C["Player"].HullStand )
 	ply:SetHullDuck( _C["Player"].HullMin, _C["Player"].HullDuck )
-	ply:SetStepSize( _C["Player"].StepSize )
 	ply:SetNoCollideWithTeammates( true )
 	ply:SetAvoidPlayers( false )
 
