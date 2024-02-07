@@ -15,6 +15,7 @@ function Player:Spawn( ply )
 	ply:SetHullDuck( _C["Player"].HullMin, _C["Player"].HullDuck )
 	ply:SetNoCollideWithTeammates( true )
 	ply:SetAvoidPlayers( false )
+	ply:SetSlowWalkSpeed( 135.4 )
 
 	if not ply:IsBot() then
 		Stats:InitializePlayer( ply )

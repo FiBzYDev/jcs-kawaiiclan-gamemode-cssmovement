@@ -26,8 +26,28 @@ include "modules/sv_checkpoint.lua"
 include "modules/sv_setspawn.lua"
 include "modules/sv_segment.lua"
 
+/*require("setflags")
+require("sourcenet")
+require("bromsock")*/
+
 gameevent.Listen "player_connect"
 Core:AddResources()
+
+// Movement
+local cl_sidespeed = GetConVar("cl_sidespeed")
+local cl_upspeed = GetConVar("cl_upspeed")
+local cl_forwardspeed = GetConVar("cl_forwardspeed")
+local cl_backspeed = GetConVar("cl_backspeed")
+
+/*cl_sidespeed:SetFlags(bit.band(cl_sidespeed:GetFlags(), bit.bnot(FCVAR_CHEAT)))
+cl_upspeed:SetFlags(bit.band(cl_upspeed:GetFlags(), bit.bnot(FCVAR_CHEAT)))
+cl_forwardspeed:SetFlags(bit.band(cl_forwardspeed:GetFlags(), bit.bnot(FCVAR_CHEAT)))
+cl_backspeed:SetFlags(bit.band(cl_backspeed:GetFlags(), bit.bnot(FCVAR_CHEAT)))
+
+game.ConsoleCommand("cl_sidespeed 400\n")
+game.ConsoleCommand("cl_upspeed 320\n")
+game.ConsoleCommand("cl_forwardspeed 400\n")
+game.ConsoleCommand("cl_backspeed 400\n")*/
 
 -- Hogs
 function GM:CanPlayerSuicide() return false end
@@ -150,7 +170,7 @@ end
 hook.Add( "PlayerConnect", "PlyConnectMSG", PlyConnectMSG )
 
 local function PlyLoadedMSG( ply )
-	timer.Simple(1, function()
+	timer.Simple(1.5, function()
 		if ply:IsValid() and !ply:IsBot() then
 			umsg.Start("DispatchChatJoin")
 				umsg.String(ply:GetName())
