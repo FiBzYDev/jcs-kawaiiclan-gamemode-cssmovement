@@ -578,7 +578,7 @@ local function ChangeMove( ply, data )
 
 			local FL_MSCrouchTime = 5.0
 
-			ply:SetDuckSpeed( FL_Frames + DIST_EPSILON )
+			ply:SetDuckSpeed( 2 / FL_MSCrouchTime )
 			ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
 
 			if _C.Player.HullStand != _C.Player.HullMax then
@@ -633,7 +633,7 @@ local function ChangeMove( ply, data )
 		end
 	else
 		local st = ply.Style
-		if gf[ ply ] > 12 then
+		if gf[ ply ] > 20 then
 			if not ds[ ply ] then
 
 			local DefaultWalkSpeed = 260.0
