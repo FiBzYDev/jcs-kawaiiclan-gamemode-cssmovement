@@ -9,7 +9,7 @@ local DEFAULT_JUMP_IMPULSE = 301.99337741 -- sqrt(2 * 57.0 units * 800.0 u/s^2)
 
 -- Global vars
 local PLAYER_HULL_MIN = Vector(-16.0, -16.0, 0.0)
-local PLAYER_HULL_STAND = Vector(16.0, 16.0, 62.0)
+local PLAYER_HULL_STAND = Vector(16.0, 16.0, 56.0)
 local PLAYER_HULL_DUCK = Vector(16.0, 16.0, 45.0)
 local PLAYER_HULL_DELTA = (PLAYER_HULL_STAND.z - PLAYER_HULL_DUCK.z) / 2
 
