@@ -39,7 +39,7 @@ concommand.Add("kawaii_thememanager", function()
 		surface.DrawLine(0, 28, width, 28)
 
 		-- Title 
-		draw.SimpleText("BETA: Theme Editor", "hud.subtitle", 12, 15, text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+		draw.SimpleText("Theme Editor", "hud.subtitle", 12, 15, text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 		-- Select theme option
 		draw.SimpleText("Select colour to change", "hud.subtitle", 12, 46, text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
@@ -47,7 +47,7 @@ concommand.Add("kawaii_thememanager", function()
 		-- color updates
 		primary = Settings:GetValue("PrimaryCol")
 		secondary = Settings:GetValue("SecondaryCol")
-		outlines = Settings:GetValue("Outlines") and color_black or Color(0, 0, 0, 0)
+		outlines = Settings:GetValue("Outlines") and Color(0, 0, 0, 0) or Color(0, 0, 0, 0)
 		text = Settings:GetValue("TextCol")
 	end
 
