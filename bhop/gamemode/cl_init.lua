@@ -126,10 +126,26 @@ local lp, Iv, st, ft, ma, mc, CalcTab, DuckDiff, NullPointer, Thirdperson, CalcA
 
 local HUDItems = { "CHudHealth", "CHudBattery", "CHudAmmo", "CHudSecondaryAmmo", "CHudSuitPower" }
 
+hook.Add( "PostPlayerDraw", "DIST_EPSILON", function( ply )
+
+	// this is limited by the network fractional bits used for coords
+	// because net coords will be only be accurate to 5 bits fractional
+	
+	// Standard collision test epsilon
+	// 1/32nd inch collision epsilon
+	
+		local DIST_EPSILON = 0.031311
+		local DIST_EPSILONFix = ( 1 ) + ( DIST_EPSILON )
+	
+		if not IsValid(ply) or not ply:Alive() then return end
+		 if ply:GetModelScale() == DIST_EPSILONFix then return end
+	
+		ply:SetModelScale( DIST_EPSILONFix )
+end )
+
 CreateClientConVar("kawaii_fov", 100)
 
 local newfov =  GetConVarNumber("kawaii_fov")
-
 
 function GM:CalcView( ply, pos, angles, fov )
 	if not Thirdperson then
@@ -176,6 +192,31 @@ function GM:CalcViewModelView( we, vm, op, oa, p, a )
 	a.r = 0
 	
 	return p, a
+end
+
+function GM:PlayerStepSoundTime( ply, iType, bWalking )
+	local fStepTime = 300
+	local fMaxSpeed = ply:GetMaxSpeed()
+
+	if ( iType == STEPSOUNDTIME_NORMAL || iType == STEPSOUNDTIME_WATER_FOOT ) then
+		if ( fMaxSpeed <= 100 ) then
+			fStepTime = 400
+		elseif ( fMaxSpeed <= 300 ) then
+			fStepTime = 300
+		else
+			fStepTime = 300
+		end
+	elseif ( iType == STEPSOUNDTIME_ON_LADDER ) then
+		fStepTime = 350
+	elseif ( iType == STEPSOUNDTIME_WATER_KNEE ) then
+		fStepTime = 600
+	end
+
+	if ( ply:Crouching() ) then
+		fStepTime = fStepTime + 1500
+	end
+
+	return fStepTime
 end
 
 suppress_viewpunch = {}
@@ -1270,6 +1311,14 @@ end
 hook.Add( "OnPlayerChat", "TaggedChat", ChatTag )
 
 local function EntityCheckPost( ply )
+
+	local ply = LocalPlayer()
+
+	if ( ply ) then
+		ply:SetViewOffset( _C["Player"].ViewStand )
+		ply:SetViewOffsetDucked( _C["Player"].ViewDuck )
+	end
+
 	hook.Remove( "PostDrawOpaqueRenderables", "PlayerMarkers" )
 	RunConsoleCommand( "sl_targetids", 0 )
 end

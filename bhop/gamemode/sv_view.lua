@@ -75,6 +75,8 @@ hook.Add( "Move", "InstallView", InstallView )
 --[[
 	Description: A timer that traces all players each 0.5 seconds rather than 100 times per second
 --]]
+local frac = 0.03333333
+
 local function ExecuteTraces()
 	local players = player.GetAll()
 	for i = 1, #players do
@@ -94,7 +96,7 @@ local function ExecuteTraces()
 		end
 	end
 end
-timer.Create( "TracePlayerViews", 0.000001, 0, ExecuteTraces )
+timer.Create( "TracePlayerViews", frac, 0, ExecuteTraces )
 
 local function ReceiveTwitchUpdate( ply, cmd, args )
 	if args == "bypass" then args = { 1 } elseif not Core.CanExecuteCommand( ply ) then return end

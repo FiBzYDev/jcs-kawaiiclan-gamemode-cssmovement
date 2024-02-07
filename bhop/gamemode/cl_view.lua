@@ -66,6 +66,8 @@ local function InstallView( ply )
 end
 hook.Add( "Move", "InstallView", InstallView )
 
+local frac = 0.03333333
+
 local function ExecuteTraces()
 	local ply = lp()
 	if not Iv( ply ) then return end
@@ -83,7 +85,7 @@ local function ExecuteTraces()
 		ViewOffsetDuck[ ply ] = nil
 	end
 end
-timer.Create( "TracePlayerViews", 0.000001, 0, ExecuteTraces )
+timer.Create( "TracePlayerViews", frac, 0, ExecuteTraces )
 
 function Core.UpdateClientViews()
 	HullStand = _C["Player"].HullStand

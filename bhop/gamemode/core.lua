@@ -36,24 +36,30 @@ local TIME_TO_DUCK   = 0.4
 
 local EYE_CLEARANCE = 12
 
+// rounding error ported - hulls are higher on CS:S
+local DIST_EPSILON = (0.031311) - (0.031250)
+local DIST_EPSILON2 = (0.031296) - (0.031250)
+
+local viewDeltaBase, viewDelta, hullSizeNormal, hullSizeCrouch, g_cspos_view, newOrigin, flGroundFactor = 0.5, -0.5, 45, 62, 62, 0.5 + 1.47, 1.5
+
 _C["Player"] = {
 	DefaultModel = "models/player/overgrowth/rabbit_playermodel.mdl",
 	DefaultWeapon = "weapon_glock",
-	JumpPower = 290,
 	ScrollPower = 268.4,
 	StepSize = 18,
 
-	JumpPower = math.sqrt( 2 * 800 * 57 ) or 290,
+	JumpHeightDefault = math.sqrt(2 * 800 * 57.0) - flGroundFactor,
+	JumpHeight = math.sqrt(2 * 800 * 57.0),
 	StrafeMultiplier = 30 or 32.4,
 	AirAcceleration = 1000,
 
 	HullMin = Vector( -16, -16, 0 ),
 	HullDuck = Vector( 16, 16, 45 ),
-	HullStand = Vector( 16, 16, 54 or 62 ),
+	HullStand = Vector( 16, 16, game.GetMap() == "bhop_kz_backalley" and viewDeltaBase * ( hullSizeNormal - hullSizeCrouch ) + 62 + 0.5 + 1.445313 or viewDeltaBase * ( hullSizeNormal - hullSizeCrouch ) + 62 + 0.5 + 0.1 ),
 	HullMax = Vector( 16, 16, 62 ),
-	ViewDuck = Vector( 0, 0, 47 ),
-	ViewStand = Vector( 0, 0, 56 or 64 ),
-	ViewOffset = Vector( 0, 0, 8 or 0 ),
+	ViewDuck = Vector( 0, 0, DIST_EPSILON2 + 47 ),
+	ViewStand = Vector( 0, 0, DIST_EPSILON + viewDeltaBase * ( hullSizeNormal - hullSizeCrouch ) + 64 or 64 ),
+	ViewOffset = Vector( 0, 0, viewDelta * ( hullSizeNormal - hullSizeCrouch ) or 0 ),
 	ViewBase = Vector( 0, 0, 0 )
 }
 
@@ -560,70 +566,65 @@ end
 local lp, Iv, Ip, ft, ic, is, isl, ct, gf, ds, du, pj, og = LocalPlayer, IsValid, IsFirstTimePredicted, FrameTime, CLIENT, SERVER, MOVETYPE_LADDER, CurTime, {}, {}, {}, {}, {}
 
 local function ChangeMove( ply, data )
+	local FL_Frames = 0
+	local DIST_EPSILON = 0.031311
+
 	if not ply:IsOnGround() then
 		if not du[ ply ] then
 			gf[ ply ] = 0
+
 			ds[ ply ] = nil
 			du[ ply ] = true
-			
-			ply:SetDuckSpeed( 0.4 )
-			ply:SetUnDuckSpeed( 0.2 )
 
-			if _C["Player"].HullStand != _C["Player"].HullMax then
-				ply:SetHull( _C["Player"].HullMin, _C["Player"].HullStand )
+			local FL_MSCrouchTime = 5.0
+
+			ply:SetDuckSpeed( FL_Frames + DIST_EPSILON )
+			ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
+
+			if _C.Player.HullStand != _C.Player.HullMax then
+				ply:SetHull( _C.Player.HullMin, _C.Player.HullStand )
 			end
 		end
-		
+
 		local st = ply.Style
 		if not ply.Freestyle and ply:GetMoveType() != 8 then
-			if st == _C.Style["SW"] or st == _C.Style["W-Only"] or st == _C.Style["S-Only"] then
+			if st == 2 or st == 4 or st == 7 then
 				data:SetSideSpeed( 0 )
-				
-				if st == _C.Style["W-Only"] and data:GetForwardSpeed() < 0 then
+
+				if st == 4 and data:GetForwardSpeed() < 0 then
 					data:SetForwardSpeed( 0 )
-				elseif st == _C.Style["S-Only"] and data:GetForwardSpeed() > 0 then
+				elseif st == 7 and data:GetForwardSpeed() > 0 then
 					data:SetForwardSpeed( 0 )
 				end
-			elseif st == _C.Style["A-Only"] then
+			elseif st == 5 then
 				data:SetForwardSpeed( 0 )
-					
+
 				if data:GetSideSpeed() > 0 then
 					data:SetSideSpeed( 0 )
 				end
-			elseif st == _C.Style["D-Only"] then
+			elseif st == 6 then
 				data:SetForwardSpeed( 0 )
-					
+
 				if data:GetSideSpeed() < 0 then
 					data:SetSideSpeed( 0 )
 				end
-			elseif st == _C.Style["HSW"] then
+			elseif st == 3 then
 				if ib and ba( data:GetButtons(), 16 ) > 0 then
 					local bd = data:GetButtons()
+
 					if ba( bd, 512 ) > 0 or ba( bd, 1024 ) > 0 then
 						data:SetForwardSpeed( 0 )
 						data:SetSideSpeed( 0 )
 					end
 				end
-				
 				if data:GetForwardSpeed() == 0 or data:GetSideSpeed() == 0 then
 					data:SetForwardSpeed( 0 )
 					data:SetSideSpeed( 0 )
 				end
-			elseif st == _C.Style["SHSW"] then
-				if ( data:GetForwardSpeed() >= 0 and data:GetSideSpeed() >= 0 ) then
-					data:SetSideSpeed( 0 )
-					data:SetForwardSpeed( 0 )
-				end
-				
-				
-				if ( data:GetForwardSpeed() <= 0 and data:GetSideSpeed() <= 0 ) then
-					data:SetSideSpeed( 0 )
-					data:SetForwardSpeed( 0 )
-				end
 			end
 		end
-		
-		if ic and ply.Gravity != nil then
+
+		if (ic) and ply.Gravity != nil then
 			if ply.Gravity or ply.Freestyle then
 				ply:SetGravity( 0 )
 			else
@@ -631,55 +632,107 @@ local function ChangeMove( ply, data )
 			end
 		end
 	else
-		if not gf[ ply ] then
-			gf[ ply ] = 0
-		else
-			local st = ply.Style
-			if gf[ ply ] > 12 then
-				if not ds[ ply ] then
-					if st == _C.Style["Easy Scroll"] then
-						ply:SetJumpPower( _C.Player.JumpPower )
-					end
-					
-					ply:SetDuckSpeed( 0.4 )
-					ply:SetUnDuckSpeed( 0.2 )
-					
-					if _C.Player.HullStand != _C["Player"].HullMax and not util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 24 ) } ).Hit then
-						ply:SetHull( _C["Player"].HullMin, _C["Player"].HullMax )
-					end
+		local st = ply.Style
+		if gf[ ply ] > 12 then
+			if not ds[ ply ] then
+
+			local DefaultWalkSpeed = 260.0
+
+			local DefaultGunWalkSpeed = 260.0 - 10.0
+			local DefaultGunSprintSpeed = 130.0
+
+			local DefaultSprintSpeed = 0.20
+
+				if st == 1 then
+					ply:SetRunSpeed( DefaultSprintSpeed )
+					ply:SetMaxSpeed( DefaultWalkSpeed )
+				end
+
+				if st == 8 || st == 9 || st == 10 || st == 14 then
+					ply:SetWalkSpeed( DefaultGunWalkSpeed )
+					ply:SetRunSpeed( DefaultGunSprintSpeed )
+				end
+
+				if st == 9 then
+					ply:SetJumpPower( _C.Player.JumpHeightBase )
+				end
+
+				local FL_MSCrouchTime = 5.0
+
+				ply:SetDuckSpeed( 2 / FL_MSCrouchTime )
+				ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
 			
-					ds[ ply ] = true
+				if _C.Player.HullStand != _C.Player.HullMax and not util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 24 ) } ).Hit then
+					ply:SetHull( _C.Player.HullMin, _C.Player.HullMax )
 				end
-			else
-				gf[ ply ] = gf[ ply ] + 1
-				
-				if gf[ ply ] == 1 then
-					du[ ply ] = nil
-					
-					if st == _C.Style["Easy Scroll"] then
-						ply:SetJumpPower( _C.Player.ScrollPower )
-					end
-					
-					if pj[ ply ] then
-						pj[ ply ] = pj[ ply ] + 1
-					end
-				elseif gf[ ply ] > 1 and data:KeyDown( 2 ) and st != _C.Style["Legit"] and st != _C.Style["Easy Scroll"] then
-					if ic and gf[ ply ] < 4 then return end
-					
-					local vel = data:GetVelocity()
-					vel.z = ply:GetJumpPower()
-					
-					ply:SetDuckSpeed( 0.4 )
-					ply:SetUnDuckSpeed( 0.2 )
-					gf[ ply ] = 0
-					
-					data:SetVelocity( vel )
+
+				if _C.Player.HullStand != _C.Player.HullMax and util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 14 ) } ).Hit then
+					ply:SetMaxSpeed( 88.40 )
+					ply:SetRunSpeed( 2.30 )
 				end
+
+			end
+
+			if Core.Util:GetPlayerJumps( ply ) == 0 then
+				ply:SetJumpPower( _C.Player.JumpHeightDefault )
+			end
+
+		else
+			gf[ ply ] = gf[ ply ] + 1
+
+			if gf[ ply ] == 1 || Core.Util:GetPlayerJumps( ply ) == 0 then
+
+				du[ ply ] = nil
+
+				local DefaultWalkSpeed = 260.0
+				local DefaultGunWalkSpeed = 260.0 - 10.0
+
+				local DefaultGunSprintSpeed = 130.0
+				local DefaultSprintSpeed = 4444 + 0.20
+
+				if st == 1 then
+					ply:SetRunSpeed( DefaultSprintSpeed )
+					ply:SetMaxSpeed( DefaultWalkSpeed )
+				end
+
+				if st == 8 || st == 9 || st == 10 || st == 14 then
+					ply:SetWalkSpeed( DefaultGunWalkSpeed )
+					ply:SetRunSpeed( DefaultGunSprintSpeed )
+				end
+
+				if st == 9 then
+					ply:SetJumpPower( _C.Player.JumpHeightBase )
+				end
+
+				if ((Core.Util:GetPlayerJumps( ply ) % 2) == 1) then
+					ply:SetJumpPower( _C.Player.JumpHeightDefault )
+				else
+					ply:SetJumpPower( _C.Player.JumpHeight )
+				end
+
+				if st == 9 then return false end
+
+				elseif gf[ ply ] > 1 and data:KeyDown( 2 ) then
+				if ic and gf[ ply ] < 4 then return end
+
+				local vel = data:GetVelocity()
+
+				vel.z = ply:GetJumpPower()
+
+				local FL_MSCrouchTime = 5.0
+
+				ply:SetDuckSpeed( FL_Frames + DIST_EPSILON )
+				ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
+
+				gf[ ply ] = 0
+
+				data:SetVelocity( vel )
 			end
 		end
 	end
 end
 hook.Add( "SetupMove", "ChangeMove", ChangeMove )
+
 
 local nojump = {}
 local njpos = {}
@@ -769,7 +822,7 @@ local function PlayerGround( ply, inWater, onFloater, flFallSpeed )
 		ply:SetJumpPower( P1 or _C.Player.ScrollPower )
 		timer.Simple( 0.3333333333333333333333333333333333333333333333333333333333, function() if not IsValid( ply ) or not ply.SetJumpPower or not _C.Player.JumpPower then return end ply:SetJumpPower( P2 or _C.Player.JumpPower ) end )
 	end
-	
+
 	if PlayerJumps[ ply ] then
 		PlayerJumps[ ply ] = PlayerJumps[ ply ] + 1
 			JAC:StartCheck(ply)
@@ -885,7 +938,7 @@ function Core.GetDuckSet()
 end
 
 function Core.Util:GetPlayerJumps( ply )
-	return PlayerJumps[ ply ]
+	return PlayerJumps[ ply ] or 0
 end
 
 function Core.Util:SetPlayerJumps( ply, nValue )
@@ -933,9 +986,9 @@ function Core.UpdateSetting( k, v )
 		if v != 1 then return end
 		o[ k ] = true
 
-		_C["Player"].HullStand.z = 54
-		_C["Player"].ViewStand.z = 56
-		_C["Player"].ViewOffset.z = 8
+		_C["Player"].HullStand.z = viewDeltaBase * ( hullSizeNormal - hullSizeCrouch ) + 62 + newOrigin
+		_C["Player"].ViewStand.z = DIST_EPSILON + viewDeltaBase * ( hullSizeNormal - hullSizeCrouch ) + 64
+		_C["Player"].ViewOffset.z = viewDelta * ( hullSizeNormal - hullSizeCrouch )
 
 		Core.SetDuckDiff()
 		Core.UpdateClientViews()
