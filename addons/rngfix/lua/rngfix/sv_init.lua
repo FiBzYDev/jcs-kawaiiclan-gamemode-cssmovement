@@ -9,7 +9,7 @@ local DEFAULT_JUMP_IMPULSE = 301.99337741 -- sqrt(2 * 57.0 units * 800.0 u/s^2)
 
 -- Global vars
 local PLAYER_HULL_MIN = Vector(-16.0, -16.0, 0.0)
-local PLAYER_HULL_STAND = Vector(16.0, 16.0, 54.0)
+local PLAYER_HULL_STAND = Vector(16.0, 16.0, 62.0)
 local PLAYER_HULL_DUCK = Vector(16.0, 16.0, 45.0)
 local PLAYER_HULL_DELTA = (PLAYER_HULL_STAND.z - PLAYER_HULL_DUCK.z) / 2
 
@@ -1111,6 +1111,8 @@ TeleFix = {
 		SetupData = "PlayerSpawn",
 		CheckOnGround = "SetupMove",
 		Move = "Move",
+		TelehopFix = "FinishMove",
+		TelehopFix2 = "FinishMove",
 		SurfFix = "FinishMove",
 		PredictVelocityClip = "Move",
 		CheckNoClip = "PlayerNoClip",
@@ -1328,7 +1330,7 @@ TeleFix:Initialize()
 
 -- PostThink works a little better than a ProcessMovement post hook because we need to wait for ProcessImpacts (trigger activation)
 -- PlayerPostThink or FinishMove or Move ?
-hook.Add("PlayerPostThink", "RNGFIX", function (ply, mv)
+hook.Add("FinishMove", "RNGFIX", function (ply, mv)
  	if not ply:Alive() then return end
 	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
 	if CheckWater(ply) then return end

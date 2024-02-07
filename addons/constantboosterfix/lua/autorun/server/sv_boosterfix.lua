@@ -4,11 +4,12 @@ Boosterfix = {
 
 	Hooks = { -- Associate a function to a hook
 		SetupData = "PlayerSpawn",
-		CheckOnGround = "SetupMove",
-		Move = "Move",
+		CheckOnGround = "FinishMove",
+		Move = "FinishMove",
 		CheckNoClip = "PlayerNoClip",
-		AnalyseBoosters = "EntityKeyValue",
-		PrepareBoosters = "InitPostEntity",
+		Boosterfix = "FinishMove",
+		AnalyseBoosters = "FinishMove",
+		PrepareBoosters = "FinishMove",
 		DisableBoosters = "AcceptInput",
 		PrepareTPs = "InitPostEntity",
 		PlayerTeleported = "AcceptInput",

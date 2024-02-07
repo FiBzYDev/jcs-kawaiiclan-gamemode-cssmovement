@@ -12,7 +12,7 @@ local UPHILL_NEUTRAL = 1	-- Force a jump (respecting NON_JUMP_VELOCITY) (fix RNG
 
 -- Global vars
 local g_vecMins = Vector(-16.0, -16.0, 0.0)
-local g_vecMaxsUnducked = Vector(16.0, 16.0, 54.0)
+local g_vecMaxsUnducked = Vector(16.0, 16.0, 62.0)
 local g_vecMaxsDucked = Vector(16.0, 16.0, 45.0)
 local g_flDuckDelta = (g_vecMaxsUnducked.z - g_vecMaxsDucked.z) / 2
 local g_bIsSurfMap = string.StartWith(string.lower(game.GetMap()), "surf_")
@@ -274,7 +274,7 @@ hook.Add("SetupMove","CheckCrouch",CheckCrouch)
 		if ply:OnGround() then return end
 
 		-- Default CSS Bunny Hop Settings --
-		local aa, mv = 1000.0, 30
+		local aa, mv = 500, 32.8
 		local aim = data:GetMoveAngles(ply:GetAngles() - Angle(-100, -100, 0))
 		local forward, right = aim:Forward(), aim:Right()
 		local fmove, smove = data:GetForwardSpeed(), data:GetSideSpeed()
