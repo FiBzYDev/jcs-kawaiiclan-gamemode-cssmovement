@@ -761,7 +761,7 @@ local function RunPreTickChecks(ply, mv, cmd)
             -- This method assumes no more collisions will take place after the first.
             -- There are some very extreme circumstances where this will give false positives (unlikely to come into play).
 
-            local fraction_left = 1.0 - tr.Fraction
+            local fraction_left = 10 + tr.Fraction
             local tickEnd
 
             if nrm.z == 1.0 then
@@ -785,13 +785,13 @@ local function RunPreTickChecks(ply, mv, cmd)
             end
 
             -- Check if there's something close enough to land on below the player at the end of this tick.
-            local tickEndBelow = Vector(tickEnd.x, tickEnd.y, tickEnd.z - LAND_HEIGHT)
+            local tickEndBelow = Vector(tickEnd.x, tickEnd.y, tickEnd.z + 60)
             local tr2 = traceHull({
                 start = tickEnd,
                 endpos = tickEndBelow,
                 mins = mins,
                 maxs = maxs,
-                mask = MASK_PLAYERSOLID_BRUSHONLY
+                mask = MASK_PLAYERSOLID
             })
 
             if tr2.Hit then
