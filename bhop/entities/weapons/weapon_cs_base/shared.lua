@@ -8,7 +8,7 @@ if ( CLIENT ) then
 
 	SWEP.DrawAmmo			= true
 	SWEP.DrawCrosshair		= false
-	SWEP.ViewModelFOV		= 82
+	SWEP.ViewModelFOV		= 82 - 6
 	SWEP.ViewModelFlip		= true
 	SWEP.CSMuzzleFlashes	= true
 	

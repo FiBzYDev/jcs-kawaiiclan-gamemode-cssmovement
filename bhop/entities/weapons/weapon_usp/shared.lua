@@ -22,7 +22,7 @@ SWEP.Spawnable= true
 SWEP.AdminSpawnable= true
 SWEP.AdminOnly = false
 
-SWEP.ViewModelFOV = 82
+SWEP.ViewModelFOV = 82 - 6
 SWEP.ViewModel = "models/weapons/v_pist_usp.mdl"
 SWEP.WorldModel = "models/weapons/w_pist_usp.mdl"
 SWEP.ViewModelFlip = true
