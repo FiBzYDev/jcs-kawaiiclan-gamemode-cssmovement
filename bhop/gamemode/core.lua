@@ -562,177 +562,155 @@ do
 	end
 end
 
-
 local lp, Iv, Ip, ft, ic, is, isl, ct, gf, ds, du, pj, og = LocalPlayer, IsValid, IsFirstTimePredicted, FrameTime, CLIENT, SERVER, MOVETYPE_LADDER, CurTime, {}, {}, {}, {}, {}
 
-local function ChangeMove( ply, data )
-	local FL_Frames = 0
-	local DIST_EPSILON = 0.031311
+local BHOP_TIME = 12
+local g_groundTicks = {}
+local g_storedVelocity = {}
+local g_longGround = {}
+
+local function ChangeMove(ply, data)
+	if not IsValid( ply ) or ply:IsBot() then return end
+
+	if not g_groundTicks[ ply ] then
+		g_groundTicks[ ply ] = 0
+
+		return
+	end
+
+	local st = ply.Style
 
 	if not ply:IsOnGround() then
-		if not du[ ply ] then
-			gf[ ply ] = 0
+		if g_groundTicks[ ply ] ~= 0 then
+			g_groundTicks[ ply ] = 0
+			g_storedVelocity[ ply ] = nil
+			g_longGround[ ply ] = false
 
-			ds[ ply ] = nil
-			du[ ply ] = true
-
-			local FL_MSCrouchTime = 5.0
-
-			ply:SetDuckSpeed( 2 / FL_MSCrouchTime )
-			ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
+			ply:SetDuckSpeed( 0.4 )
+			ply:SetUnDuckSpeed( 0.2 )
 
 			if _C.Player.HullStand != _C.Player.HullMax then
 				ply:SetHull( _C.Player.HullMin, _C.Player.HullStand )
 			end
+
 		end
 
-		local st = ply.Style
 		if not ply.Freestyle and ply:GetMoveType() != 8 then
-			if st == 2 or st == 4 or st == 7 then
+			if st == _C.Style["SW"] or st == _C.Style["W-Only"] or st == _C.Style["S-Only"] then
 				data:SetSideSpeed( 0 )
 
-				if st == 4 and data:GetForwardSpeed() < 0 then
+				if st == _C.Style["W-Only"] and data:GetForwardSpeed() < 0 then
 					data:SetForwardSpeed( 0 )
-				elseif st == 7 and data:GetForwardSpeed() > 0 then
+				elseif st == _C.Style["S-Only"] and data:GetForwardSpeed() > 0 then
 					data:SetForwardSpeed( 0 )
 				end
-			elseif st == 5 then
+			elseif st == _C.Style["A-Only"] then
 				data:SetForwardSpeed( 0 )
 
 				if data:GetSideSpeed() > 0 then
 					data:SetSideSpeed( 0 )
 				end
-			elseif st == 6 then
+			elseif st == _C.Style["D-Only"] then
 				data:SetForwardSpeed( 0 )
 
 				if data:GetSideSpeed() < 0 then
 					data:SetSideSpeed( 0 )
 				end
-			elseif st == 3 then
+			elseif st == _C.Style["HSW"] then
 				if ib and ba( data:GetButtons(), 16 ) > 0 then
 					local bd = data:GetButtons()
-
 					if ba( bd, 512 ) > 0 or ba( bd, 1024 ) > 0 then
 						data:SetForwardSpeed( 0 )
 						data:SetSideSpeed( 0 )
 					end
 				end
+
 				if data:GetForwardSpeed() == 0 or data:GetSideSpeed() == 0 then
 					data:SetForwardSpeed( 0 )
 					data:SetSideSpeed( 0 )
 				end
+			elseif st == _C.Style["SHSW"] then
+				if ( data:GetForwardSpeed() >= 0 and data:GetSideSpeed() >= 0 ) then
+					data:SetSideSpeed( 0 )
+					data:SetForwardSpeed( 0 )
+				end
+
+
+				if ( data:GetForwardSpeed() <= 0 and data:GetSideSpeed() <= 0 ) then
+					data:SetSideSpeed( 0 )
+					data:SetForwardSpeed( 0 )
+				end
 			end
 		end
 
-		if (ic) and ply.Gravity != nil then
+		if ic and ply.Gravity != nil then
 			if ply.Gravity or ply.Freestyle then
 				ply:SetGravity( 0 )
 			else
 				ply:SetGravity( plg )
 			end
 		end
-	else
-		local st = ply.Style
-		if gf[ ply ] > 20 then
-			if not ds[ ply ] then
 
-			local DefaultWalkSpeed = 260.0
+		return
+	end
 
-			local DefaultGunWalkSpeed = 260.0 - 10.0
-			local DefaultGunSprintSpeed = 130.0
+	if g_groundTicks[ ply ] > BHOP_TIME then
+		if g_longGround[ ply ] then return end
 
-			local DefaultSprintSpeed = 0.20
-
-				if st == 1 then
-					ply:SetRunSpeed( DefaultSprintSpeed )
-					ply:SetMaxSpeed( DefaultWalkSpeed )
-				end
-
-				if st == 8 || st == 9 || st == 10 || st == 14 then
-					ply:SetWalkSpeed( DefaultGunWalkSpeed )
-					ply:SetRunSpeed( DefaultGunSprintSpeed )
-				end
-
-				if st == 9 then
-					ply:SetJumpPower( _C.Player.JumpHeightBase )
-				end
-
-				local FL_MSCrouchTime = 5.0
-
-				ply:SetDuckSpeed( 2 / FL_MSCrouchTime )
-				ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
-			
-				if _C.Player.HullStand != _C.Player.HullMax and not util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 24 ) } ).Hit then
-					ply:SetHull( _C.Player.HullMin, _C.Player.HullMax )
-				end
-
-				if _C.Player.HullStand != _C.Player.HullMax and util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 14 ) } ).Hit then
-					ply:SetMaxSpeed( 88.40 )
-					ply:SetRunSpeed( 2.30 )
-				end
-
-			end
-
-			if Core.Util:GetPlayerJumps( ply ) == 0 then
-				ply:SetJumpPower( _C.Player.JumpHeightDefault )
-			end
-
-		else
-			gf[ ply ] = gf[ ply ] + 1
-
-			if gf[ ply ] == 1 || Core.Util:GetPlayerJumps( ply ) == 0 then
-
-				du[ ply ] = nil
-
-				local DefaultWalkSpeed = 260.0
-				local DefaultGunWalkSpeed = 260.0 - 10.0
-
-				local DefaultGunSprintSpeed = 130.0
-				local DefaultSprintSpeed = 4444 + 0.20
-
-				if st == 1 then
-					ply:SetRunSpeed( DefaultSprintSpeed )
-					ply:SetMaxSpeed( DefaultWalkSpeed )
-				end
-
-				if st == 8 || st == 9 || st == 10 || st == 14 then
-					ply:SetWalkSpeed( DefaultGunWalkSpeed )
-					ply:SetRunSpeed( DefaultGunSprintSpeed )
-				end
-
-				if st == 9 then
-					ply:SetJumpPower( _C.Player.JumpHeightBase )
-				end
-
-				if ((Core.Util:GetPlayerJumps( ply ) % 2) == 1) then
-					ply:SetJumpPower( _C.Player.JumpHeightDefault )
-				else
-					ply:SetJumpPower( _C.Player.JumpHeight )
-				end
-
-				if st == 9 then return false end
-
-				elseif gf[ ply ] > 1 and data:KeyDown( 2 ) then
-				if ic and gf[ ply ] < 4 then return end
-
-				local vel = data:GetVelocity()
-
-				vel.z = ply:GetJumpPower()
-
-				local FL_MSCrouchTime = 5.0
-
-				ply:SetDuckSpeed( FL_Frames + DIST_EPSILON )
-				ply:SetUnDuckSpeed( 1 / FL_MSCrouchTime )
-
-				gf[ ply ] = 0
-
-				data:SetVelocity( vel )
-			end
+		if st == _C.Style["Easy Scroll"] then
+			ply:SetJumpPower( _C.Player.JumpPower )
 		end
+
+		if _C.Player.HullStand != _C.Player.HullMax and not util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 24 ) } ).Hit then
+			ply:SetHull( _C.Player.HullMin, _C.Player.HullMax )
+		end
+
+		if _C.Player.HullStand != _C.Player.HullMax and util.TraceLine( { filter = ply, mask = MASK_PLAYERSOLID, start = ply:EyePos(), endpos = ply:EyePos() + Vector( 0, 0, 14 ) } ).Hit then
+			ply:SetMaxSpeed( 88.40 )
+			ply:SetRunSpeed( 2.30 )
+		end
+
+		ply:SetDuckSpeed( 0.4 )
+		ply:SetUnDuckSpeed( 0.2 )
+
+		g_longGround[ ply ] = true
+
+		return
+	end
+
+	if Core.Util:GetPlayerJumps( ply ) == 0 then
+		ply:SetJumpPower( _C.Player.JumpHeightDefault )
+	end
+
+	g_groundTicks[ ply ] = g_groundTicks[ ply ] + 1
+
+	-- player will land this tick
+	if g_groundTicks[ ply ] == 1 || Core.Util:GetPlayerJumps( ply ) == 0 then
+		g_storedVelocity[ ply ] = data:GetVelocity()
+
+		if st == _C.Style["Easy Scroll"] then
+			ply:SetJumpPower( _C.Player.ScrollPower )
+		end
+
+		if ((Core.Util:GetPlayerJumps( ply ) % 2) == 1) then
+			ply:SetJumpPower( _C.Player.JumpHeightDefault )
+		else
+			ply:SetJumpPower( _C.Player.JumpHeight )
+		end
+
+		if pj[ ply ] then
+			pj[ ply ] = pj[ ply ] + 1
+		end
+	elseif g_groundTicks[ ply ] > 1 and data:KeyDown( 2 ) and st != _C.Style["Legit"] and st != _C.Style["Easy Scroll"] then
+		if ic and g_groundTicks[ ply ] < 4 then return end
+
+		-- CrouchBug fix?
+		local vel = g_storedVelocity[ ply ] or data:GetVelocity()
+		vel.z = ply:GetJumpPower()
+		data:SetVelocity( vel )
 	end
 end
 hook.Add( "SetupMove", "ChangeMove", ChangeMove )
-
 
 local nojump = {}
 local njpos = {}
