@@ -325,16 +325,14 @@ local function DispatchChatJoinMSG(um)
 	local USB = "The Maybe United States"
 	local UK = "The United Kingdom"
 	
-	if (LocalPlayer():Ping() > 0) then
-		if (LocalPlayer():Ping() >= 100) then
-			location = UK
-	   	  else
-	    	if (LocalPlayer():Ping() >= 60) then
-				location = USB
-			else 
-				location = US
-			end 
-		end
+	if (LocalPlayer():Ping() >= 100) then
+		location = UK
+		  else
+		if (LocalPlayer():Ping() >= 60) then
+			location = USB
+		else 
+			location = US
+		end 
 	end
 
 	if mode == "1" then
