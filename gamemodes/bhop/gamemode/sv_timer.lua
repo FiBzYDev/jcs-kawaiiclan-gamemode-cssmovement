@@ -7,6 +7,12 @@ Timer.Multiplier = 1
 Timer.BonusMultiplier = 1
 Timer.Options = 0
 
+-- reqwest is now required for Discord webhooks (http.Post is quite outdated) --
+pcall(require, "reqwest")
+local reqwest = reqwest
+
+local DISCORD_WR_WEBHOOK = file.Read("bhop-wr-webhook.txt", "DATA")
+
 local function ValidTimer( ply, bBonus )
 	if ply:IsBot() then return false end
 	if ply:GetNWInt("inPractice", false) then return false end
@@ -157,28 +163,6 @@ function PLAYER:StopAnyTimer()
 	Core:Send( self, "Timer", { "Start" } )
 	Core:Send(player.GetAll(), "Scoreboard", {"stopanytimer", self})
 	return true
-end
-
-local ZoneEnts = {}
-
-function PLAYER:InSpawn( pos )
-	pos = pos or self:GetPos()
-
-	for _,zone in pairs( ZoneEnts ) do
-		if IsValid( zone ) then
-			if self.Bonus then
-				if zone.zonetype == Zones.Type["Bonus Start"] then
-
-				end
-			elseif zone.zonetype != Zones.Type["Normal Start"] then
-				continue
-			end
-
-			if pos.x >= zone.min.x and pos.y >= zone.min.y and pos.z >= zone.min.z and pos.x <= zone.max.x and pos.y <= zone.max.y and pos.z <= zone.max.z then
-				return true
-			end
-		end
-	end
 end
 
 function PLAYER:StartFreestyle()

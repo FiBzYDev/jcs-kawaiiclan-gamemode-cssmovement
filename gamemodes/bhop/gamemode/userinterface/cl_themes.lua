@@ -5,7 +5,7 @@ local primary = Settings:Register("PrimaryCol", Color(32, 32, 32, 255))
 local secondary = Settings:Register("SecondaryCol", Color(42, 42, 42, 255))
 local tertiary = Settings:Register("TertiaryCol", Color(34, 34, 38, 170))
 local accent = Settings:Register("AccentCol", Color(80, 30, 40, 170))
-local outlines = Settings:Register("Outlines", true) and color_black or Color(0, 0, 0, 0)
+local outlines = Settings:Register("Outlines", Color(255, 255, 255))
 local text = Settings:Register("TextCol", color_white)
 local text2 = Settings:Register("TextCol2", Color(200, 200, 200))
 local text22 = Settings:Register("TextCol24", Color(25, 25, 25))
@@ -47,7 +47,7 @@ concommand.Add("kawaii_thememanager", function()
 		-- color updates
 		primary = Settings:GetValue("PrimaryCol")
 		secondary = Settings:GetValue("SecondaryCol")
-		outlines = Settings:GetValue("Outlines") and Color(0, 0, 0, 0) or Color(0, 0, 0, 0)
+		outlines = Settings:GetValue("Outlines")
 		text = Settings:GetValue("TextCol")
 	end
 
@@ -65,8 +65,9 @@ concommand.Add("kawaii_thememanager", function()
 		["Secondary Colour"] = "SecondaryCol",
 		["Tertiary Colour"] = "TertiaryCol",
 		["Accent Colour"] = "AccentCol",
+		["Outlines Colour"] = "Outlines",
 		["Text Colour"] = "TextCol",
-		["Text Colour 2"] = "TextCol2",
+		["Scoreboard"] = "TextCol2",
 		["Start Zone"] = "StartZone",
 		["End Zone"] = "EndZone",
 		["Bonus Start"] = "BonusStart",

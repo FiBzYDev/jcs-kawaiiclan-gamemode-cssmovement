@@ -9,6 +9,13 @@ local StrafeLast = nil -- Your last strafe key for counting strafes
 local StrafeDirection = nil -- The direction of your strafes used for displaying
 local StrafeStill = 0 -- Counter to reset mouse movement
 
+local StrafeAxis2 = 0 -- Saves the last eye angle yaw for checking mouse movement
+local StrafeButtons2 = nil -- Saves the buttons from SetupMove for displaying
+local StrafeCounter2 = 0 -- Holds the amount of strafes
+local StrafeLast2 = nil -- Your last strafe key for counting strafes
+local StrafeDirection2 = nil -- The direction of your strafes used for displaying
+local StrafeStill2 = 0 -- Counter to reset mouse movement
+
 local fb, ik, lp, ts = bit.band, input.IsKeyDown, LocalPlayer, _C.Team.Spectator -- This function is used frequently so to reduce lag...
 local function norm( i ) if i > 180 then i = i - 360 elseif i < -180 then i = i + 360 end return i end -- Custom function to normalize eye angles
 
@@ -54,6 +61,31 @@ local function MonitorInput( ply, data )
 end
 hook.Add( "SetupMove", "MonitorInput", MonitorInput )
 
+-- Monitors the buttons and angles
+local function MonitorInputNew( ply, data )
+	StrafeButtons2 = data:GetButtons()
+	
+	local ang2 = data:GetAngles().y
+	local difference2 = norm( ang2 - StrafeAxis2 )
+	
+	if difference2 > 0 then
+		StrafeDirection2 = -1
+		StrafeStill2 = 0
+	elseif difference2 < 0 then
+		StrafeDirection2 = 1
+		StrafeStill2 = 0
+	else
+		if StrafeStill2 > 20 then
+			StrafeDirection2 = nil
+		end
+		
+		StrafeStill2 = StrafeStill2 + 1
+	end
+	
+	StrafeAxis2 = ang2
+end
+hook.Add( "SetupMove", "MonitorInputNew", MonitorInputNew )
+
 -- Paints the actual HUD
 local function HUDPaintB()
 	if not ViewGUI:GetBool() then return end
@@ -62,21 +94,21 @@ local function HUDPaintB()
 	local data = {pos = {20, 20}, strafe = true, r = (MouseRight != nil), l = (MouseLeft != nil)}
 
 	-- Setting the key colors
-	if StrafeButtons then
-		if fb( StrafeButtons, IN_MOVELEFT ) > 0 then 
+	if StrafeButtons2 then
+		if fb( StrafeButtons2, IN_MOVELEFT ) > 0 then 
 			data.a = true 
 		end
 
-		if fb( StrafeButtons, IN_MOVERIGHT ) > 0 then
+		if fb( StrafeButtons2, IN_MOVERIGHT ) > 0 then
 			data.d = true 
 	 	end
 	end
 	
 	-- Getting the direction for the mouse
-	if StrafeDirection then
-		if StrafeDirection > 0 then
+	if StrafeDirection2 then
+		if StrafeDirection2 > 0 then
 			MouseLeft, MouseRight = nil, Color( 142, 42, 42, 255 )
-		elseif StrafeDirection < 0 then
+		elseif StrafeDirection2 < 0 then
 			MouseLeft, MouseRight = Color( 142, 42, 42, 255 ), nil
 		else
 			MouseLeft, MouseRight = nil, nil
@@ -87,7 +119,7 @@ local function HUDPaintB()
 	
 	-- If we have buttons, display them
 	if StrafeButtons then
-		if fb( StrafeButtons, IN_FORWARD ) > 0 then
+		if fb( StrafeButtons2, IN_FORWARD ) > 0 then
 			data.w = true 
 		end
 		if fb( StrafeButtons, IN_BACK ) > 0 then

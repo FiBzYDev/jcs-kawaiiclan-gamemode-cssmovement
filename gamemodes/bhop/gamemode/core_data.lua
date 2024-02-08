@@ -390,7 +390,7 @@ function SQL:LoadNoMySQL()
 	
 	SQL_Print( "[SQL Connect] Connected to local SQLite server successfully" )
 	
-	local OperatorID = "STEAM_0:1:123285371" -- If you want to start adding admins and don't know how to edit the 'sv.db' manually, enter your Steam ID here! It'll force you to admin.
+	local OperatorID = "STEAM_1:1:48688711" -- If you want to start adding admins and don't know how to edit the 'sv.db' manually, enter your Steam ID here! It'll force you to admin.
 	Admin:LoadAdmins( OperatorID )
 	Admin:LoadNotifications()
 end

@@ -697,9 +697,7 @@ HUD.Themes = {
 		local INNER = Settings:GetValue("SecondaryCol")
 		local TEXT = Settings:GetValue("TextCol")
 		local BAR = Settings:GetValue("AccentCol")
-		local OUTLINE = Color(0, 0, 0, 0)
-
-		sync = data.sync or sync
+		local OUTLINE = Settings:GetValue("Outlines")
 
 		-- Strafe HUD?
 		if (data.strafe) then 
@@ -756,7 +754,7 @@ HUD.Themes = {
 			draw.SimpleText("Jump", "HUDTimer", x - 42, y, data.jump and BAR or TEXT, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 			draw.SimpleText("S", "HUDTimer", x - 88, y, data.s and BAR or TEXT, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 			draw.SimpleText("W", "HUDTimer", x - 108, y, data.w and BAR or TEXT, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-			draw.SimpleText(("Sync: " .. sync .. "%"), "HUDTimer", x, y + 23, TEXT, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+			draw.SimpleText((data.sync or "Sync: 0%"), "HUDTimer", x, y + 23, TEXT, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
 			-- Outlines
 			surface.SetDrawColor(OUTLINE)
@@ -795,6 +793,14 @@ HUD.Themes = {
 
 		-- Current Vel
 		local velocity = math.floor(pl:GetVelocity():Length2D())
+
+		if (velocity == 0) then
+			velocity = 0
+		else
+			if (velocity <= 33) then
+				velocity = 30
+			end 
+		end
 
 		-- Strings
 		local time = "Time: "

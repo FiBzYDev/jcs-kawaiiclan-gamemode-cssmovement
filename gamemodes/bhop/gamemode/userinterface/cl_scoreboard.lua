@@ -77,7 +77,7 @@ local function CreateScoreboard()
 			SCORE_ACCENT = Settings:GetValue("AccentCol")
 
 			-- Outlines?
-			outlines = text22
+			outlines = Settings:GetValue("Outlines")
 
 			-- Text
 			text_colour = Settings:GetValue("TextCol")
@@ -88,9 +88,8 @@ local function CreateScoreboard()
 			surface.DrawRect(0, 0, width, height)
 			surface.SetDrawColor(text22)
 
-			if outlines then
-				surface.DrawOutlinedRect(0, 0, width, height, 10)
-			end
+			surface.SetDrawColor(Settings:GetValue("Outlines"))
+			surface.DrawOutlinedRect(0, 0, width, height)
 
 			surface.SetDrawColor(text22)
 			surface.DrawRect(0, 0, width, 35)
@@ -119,7 +118,6 @@ local function CreateScoreboard()
 
 			-- Text
 			draw.SimpleText(SCORE_CREDITS, "hud.credits", 14, height - 20, text_colour, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			--draw.SimpleText("Click on a player's name for an options panel!", "hud.credits", width - 14, height - 20, text_colour, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 		end
 
 	-- Create our playerlist base panel
@@ -159,7 +157,11 @@ local function CreateScoreboard()
 
 			surface.SetDrawColor(isBot and SCORE_ACCENT or Color( 0, 0, 0, 0 ))
 			surface.DrawRect(0, 0, width, 37)
-			surface.SetDrawColor(color_black)
+			surface.SetDrawColor(Settings:GetValue("Outlines"))
+
+			if outlines then
+				surface.DrawOutlinedRect(0, 0, width, height)
+			end
 
 			-- Cool fucking way to calculate distances bro
 			local distance = (width / 10)
@@ -173,13 +175,13 @@ local function CreateScoreboard()
 				pRank = { VIPTag, Core.Util:VectorToColor( VIPTagColor ) }
 			end
 
-			draw.SimpleText(isBot and "WR Replay" or pRank[1], "hud.subtitle", 12, 20, isBot and Color(255, 255, 255) or pRank[2], TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			draw.SimpleText(isBot and "WR Replay" or pRank[1], "hud.subtitle", 40, 20, isBot and Color(255, 255, 255) or pRank[2], TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 			-- Player name
 			local ColorSpec = pl:GetNWInt( "Spectating", 0 ) == 1 and Color( 180, 180, 180 ) or Color( 255, 255, 255 )
 
 			local name = isBot and pl:GetNWString("BotName", "Loading...") or pl:Nick()
-			if isBot and (name ~= "Loading..." and name ~= "No replay available") then
+			if isBot and (name ~= "Loading..." and name >= "No replay available") then
 				local position = pl:GetNWInt("WRPos", 0)
 				name = (position > 0 and ("#" .. position .. " run ") or "Run ") .. "by " .. name
 			end
@@ -252,7 +254,7 @@ local function CreateScoreboard()
 					local w, h = surface.GetTextSize(place)
 
 					draw.SimpleText(pb, "hud.subtitle", distance * 8.5 + 6 + w, 20, text_colour, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-					draw.SimpleText("#" .. place, "hud.subinfo", distance * 8.5, 20, text_colour2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+					draw.SimpleText("#" .. place, "hud.subtitle", distance - 100, 20, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 				end
 			else
 				draw.SimpleText(pb, "hud.subtitle", distance * 8.5, 20, text_colour, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)

@@ -1,90 +1,39 @@
--- Code for set spawn style
--- by justa and fibzy
+--[[
+	Author: Niflheimrx
+	Description: Setspawn handler, allow players to create custom spawnpoints when restarting the map/bonus
+]]--
 
--- module 
-SetSpawn = {}
+-- Create setspawn global table --
+Setspawn = {}
+Setspawn.Points = {}
 
--- Setup waypoints
-function SetSpawn:WaypointSetup(client)
+-- This handler basically functions the same as how it does on FX just for compatablity reasons --
+local function SetspawnHandler(ply)
+	if (ply:Team() == TEAM_SPECTATOR) then
+		Core:Send(ply, "Print", {"Timer", "You have to be alive and playing to be able to use it"})
+	return end
 
-	if (not client.waypoints) then 
-		client.waypoints = {}
-		client.lastWaypoint = 0
-		client.lastTele = 0
+	if (!ply:OnGround()) then
+		Core:Send(ply, "Print", {"Timer", "You have to touch the ground to be able to use it"})
+	return end
+
+	if (ply:GetVelocity():Length2D() != 0) then
+		Core:Send(ply, "Print", {"Timer", "You have to stay still to be able to use it"})
+	return end
+
+	local steamID = ply:SteamID()
+	if !Setspawn.Points[steamID] then
+		Setspawn.Points[steamID] = {}
 	end
 
+	local modelPos, eyeAngle = ply:GetPos(), ply:EyeAngles()
+	local spawnIdentifier = (ply.Style == _C.Style.Bonus and 2 or 0)
+
+	if !Zones:IsInside(ply, spawnIdentifier) then
+		Core:Send(ply, "Print", {"Timer", "Unable to set spawnpoint, make sure you are in the starting zone"})
+	return end
+
+	Setspawn.Points[steamID][spawnIdentifier] = {modelPos, eyeAngle}
+	Core:Send(ply, "Print", {"Timer", "Spawnpoint saved!"})
 end
-
--- Set a waypoint
-function SetSpawn:SetWaypoint(client)
-
-	-- Set up if not already
-	if client.Style == 2 then return end
-	if client.Style == 3 then return end
-	if client.Style == 4 then return end
-	if client.Style == 5 then return end
-	if client.Style == 6 then return end
-	if client.Style == 7 then return end
-	if client.Style == 9 then return end
-	if client.Style == 10 then return end
-
-	-- Set up waypoints
-	self:WaypointSetup(client)
-
-	if client.Tn then
-		Core:Send(client, "Print", {"Timer", "You can only set spawn point in a zone."})
-		return 
-	end
-
-	-- Too fast
-	if (client.lastWaypoint > CurTime()) then 
-		return
-	end
-
-	-- Set waypoint
-	table.insert(client.waypoints, {
-		frame = Bot:GetFrame(client),
-		pos = client:GetPos(),
-		angles = client:EyeAngles(),
-		vel = client:GetVelocity(),
-	})
-
-	-- Lil' inform 
-	Core:Send(client, "Print", {"Timer", "New spawn set."})
-
-	-- Last waypoint
-	client.lastWaypoint = CurTime() + 0.5
-end
-
--- Goto waypoint
-function SetSpawn:GotoWaypoint(client)
-	-- Set up waypoints
-	self:WaypointSetup(client)
-
-	-- Do we even have a waypoint
-	if (#client.waypoints < 1) then 
-		Core:Send(client, "Print", {"Timer", "Waiting for you to set a spawn point."})
-		return
-	end
-
-	-- Too fast
-	if (client.lastTele > CurTime()) then 
-		return
-	end
-
-	-- Get waypoint
-	local waypoint = client.waypoints[#client.waypoints]
-
-	-- Set player values
-	client:SetPos(waypoint.pos)
-	client:SetLocalVelocity(waypoint.vel)
-	client:SetEyeAngles(waypoint.angles)
-
-	Spectator:PlayerRestart(client)
-
-	-- Strip bot frames 
-	Bot:StripFromFrame(client, waypoint.frame)
-
-	-- Last tele
-	client.lastTele = 0
-end
+Command:Register({"setspawn", "spawnpoint", "ss"}, SetspawnHandler)

@@ -58,10 +58,24 @@ function Player:SpawnChecks( ply )
 		end
 	end
 
-	if ply.Style != _C.Style.Bonus and Zones.StartPoint then
-		ply:SetPos( Zones:GetSpawnPoint( Zones.StartPoint ) )
-	elseif ply.Style == _C.Style.Bonus and Zones.BonusPoint then
-		ply:SetPos( Zones:GetSpawnPoint( Zones.BonusPoint ) )
+	local isBonus = (ply.Style == _C.Style.Bonus)
+	local steamID, index = ply:SteamID(), nil
+	if not isBonus and Zones.StartPoint then
+		index = Setspawn.Points and Setspawn.Points[steamID] and Setspawn.Points[steamID][0]
+		if index then
+			ply:SetPos( index[1] )
+			ply:SetEyeAngles( index[2] )
+		else
+			ply:SetPos( Zones:GetSpawnPoint( Zones.StartPoint ) )
+		end
+	elseif isBonus and Zones.BonusPoint then
+		index = Setspawn.Points and Setspawn.Points[steamID] and Setspawn.Points[steamID][2]
+		if index then
+			ply:SetPos( index[1] )
+			ply:SetEyeAngles( index[2] )
+		else
+			ply:SetPos( Zones:GetSpawnPoint( Zones.BonusPoint ) )
+		end
 	end
 
 	if not ply:IsBot() and ply:GetMoveType() != MOVETYPE_WALK then

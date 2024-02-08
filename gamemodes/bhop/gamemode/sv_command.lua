@@ -105,7 +105,6 @@ function Command:Init()
 
 		Command:RemoveLimit( ply )
 		Command.Restart( ply )
-		SetSpawn:GotoWaypoint( ply )
 	end )
 
 	self:Register( { "spectate", "spec", "watch", "view" }, function( ply, args )
@@ -138,11 +137,6 @@ function Command:Init()
 	self:Register( { "noclip", "freeroam", "clip", "wallhack" }, function( ply )
 		Command.NoClip( ply )
 	end )
-
-	-- Register set spawn command
-	self:Register({ "ss", "setspawn", "setstart" }, function(client)
-		SetSpawn:SetWaypoint(client)
-	end)
 
 	-- Noclip speed
 	self:Register({"noclipspeed", "nspeed", "ncspeed"}, function(pl, args)

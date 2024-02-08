@@ -127,6 +127,14 @@ function Zones:GetSpawnPoint( data )
 	return out
 end
 
+function Zones:IsInside( ply, nType )
+	for i = 1, #Zones.Entities do
+		local zone = Zones.Entities[ i ]
+		if IsValid( zone ) and (zone.zonetype == nType) and table.HasValue( ents.FindInBox( zone.min, zone.max ), ply ) then
+			return true
+		end
+	end
+end
 
 -- Editor
 Zones.Editor = {}

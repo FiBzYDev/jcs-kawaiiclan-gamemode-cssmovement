@@ -880,7 +880,7 @@ for name,id in pairs( _C.Style ) do
 end
 
 function Core:StyleName( nID )
-	return StyleNames[ nID ] or "(No Style)"
+	return StyleNames[ nID ] or "No Style"
 end
 
 function Core:IsValidStyle( nStyle )

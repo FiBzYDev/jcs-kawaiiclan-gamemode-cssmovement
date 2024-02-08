@@ -25,6 +25,7 @@ include "modules/sv_config.lua"
 include "modules/sv_checkpoint.lua"
 include "modules/sv_setspawn.lua"
 include "modules/sv_segment.lua"
+include "modules/sv_wrsfx.lua"
 
 /*require("setflags")
 require("sourcenet")

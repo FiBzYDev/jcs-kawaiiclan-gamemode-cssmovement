@@ -720,3 +720,11 @@ timer.Create( "BotController", .1, 0, function()
 		end
 	end
 end )
+
+function Bot.HandleSpecialBot( _, szType, _, data )
+	if szType == "Fetch" then
+		if !BotData[data] then return end
+
+		return BotData[data], nil, nil, BotData[data][4], BotData[data][5], BotInfo[data]
+	end
+end

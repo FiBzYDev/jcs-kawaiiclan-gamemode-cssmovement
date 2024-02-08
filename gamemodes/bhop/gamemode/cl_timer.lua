@@ -174,6 +174,37 @@ local function GetCurrentTime()
 	end
 end
 
+do
+	local TimeFormat = { { " [-%.2d:%.2d]", " [+%.2d:%.2d]", " [WR]", " [PB]" }, { " %.2d:%.2d", " +%.2d:%.2d", " WR", " PB" }, { " [PB -%.2d:%.2d]", " [PB +%.2d:%.2d]", " [WR]", " [PB]" }, { " [WR -%.2d:%.2d]", " [WR +%.2d:%.2d]", " [WR]", " [PB]" } }
+	local function GetTimePieceCustom( nCompare, nStyle, nComp, nFormat, bPB )
+		local tFormat, nFirst = TimeFormat[ nFormat or 1 ]
+		if nComp then
+			nFirst = nComp
+		else
+			nFirst = TimeTop[ nStyle or Style ]
+		end
+
+		if !nFirst then return nFormat == 2 and "No WR" or "" end
+
+		local nDifference = nCompare - nFirst
+		local nAbs = ab( nDifference )
+
+		if nDifference < 0 then
+			return fo( tFormat[ 1 ], fl( nAbs / 60 ), fl( nAbs % 60 ) )
+		elseif nDifference == 0 then
+			return tFormat[ bPB and 4 or 3 ]
+		else
+			return fo( tFormat[ 2 ], fl( nAbs / 60 ), fl( nAbs % 60 ) )
+		end
+	end
+
+	function Timer.GetTimeDifference( b, t )
+		t = t or GetCurrentTime()
+
+		return t > 0 and GetTimePieceCustom( t, nil, b, 1 ) or "", t
+	end
+end
+
 local function GetTimePiece( nCompare, nStyle )
 	local nFirst = TCache[ nStyle or Timer.Style ]
 	if not nFirst then return "" end

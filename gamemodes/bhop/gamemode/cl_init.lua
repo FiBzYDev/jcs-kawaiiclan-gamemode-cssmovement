@@ -16,6 +16,7 @@ include "cl_gui.lua"
 
 include "modules/cl_admin.lua"
 include "modules/cl_strafe.lua"
+include "modules/cl_wrsfx.lua"
 
 include "userinterface/sh_init.lua"
 include "userinterface/cl_bhoptimer.lua"
@@ -325,10 +326,10 @@ local function DispatchChatJoinMSG(um)
 	local USB = "The Maybe United States"
 	local UK = "The United Kingdom"
 	
-	if (LocalPlayer():Ping() >= 100) then
+	if (LocalPlayer():Ping() >= 60) then
 		location = UK
-		  else
-		if (LocalPlayer():Ping() >= 60) then
+	  else
+		if (LocalPlayer():Ping() >= 100) then
 			location = USB
 		else 
 			location = US
@@ -340,10 +341,10 @@ local function DispatchChatJoinMSG(um)
 		surface.PlaySound("common/talk.wav")
 	end
 	elseif mode == "2" then
-		chat.AddText(Color(255, 109, 10), "Server | ", Color(255, 255 , 255), ply, Color(255, 255 , 255), " (", Color(255, 109, 10), STEAMID, Color(255, 255 , 255), ")", Color(255, 255 , 255), " has connected from ", Color(255, 109, 10), location .. ".")
+		chat.AddText(Color(255, 109, 10), "Server ", Color(255, 255 , 255), "| ", Color(255, 109, 10), ply, Color(255, 255 , 255), " (", Color(255, 109, 10), STEAMID, Color(255, 255 , 255), ")", Color(255, 255 , 255), " has connected from ", Color(255, 109, 10), location, Color(255, 255, 255), ".")
 	elseif mode == "3" then
 		if GetConVarNumber( "sm_connection" ) == 1 then
-		chat.AddText(Color(255, 109, 10), "Server | ", Color(255, 255 , 255), ply, Color(255, 255 , 255), " (", Color(255, 109, 10), STEAMID, Color(255, 255 , 255), ")", Color(255, 255 , 255), " has disconnected from ", Color(255, 109, 10), location .. ".")
+		chat.AddText(Color(255, 109, 10), "Server ", Color(255, 255 , 255), "| ", Color(255, 109, 10), ply, Color(255, 255 , 255), " (", Color(255, 109, 10), STEAMID, Color(255, 255 , 255), ")", Color(255, 255 , 255), " has disconnected from ", Color(255, 109, 10), location, Color(255, 255, 255), ".")
 
 		surface.PlaySound("common/talk.wav")
 		end
@@ -359,7 +360,7 @@ local function DispatchChatWR(um)
 	local mode = um:ReadString()
 	local STEAMID = um:ReadString()
 
-	chat.AddText(Color(255, 109, 10), "Server ", Color(255, 255 , 255), "| " .. ply .. "'s run", Color(255, 255 , 255), " as recorded by the ", Color(255, 0, 0), "R", Color(55, 127, 0), "e", Color(255, 255, 0), "c", Color(0, 255, 0), "o", Color(0, 0, 255), "r", Color(75, 0, 130), "d ", Color(148, 0, 211), "B", Color(255, 0 , 0), "o", Color(255, 127, 0), "t", Color(255, 255, 0), "!", Color( 255, 255, 255 ), " Congratulations")
+	chat.AddText(Color(255, 109, 10), "Server ", Color(255, 255 , 255), "| ", Color(255, 109, 10), ply .. "'s run", Color(255, 255 , 255), " as recorded by the ", Color(255, 0, 0), "R", Color(55, 127, 0), "e", Color(255, 255, 0), "c", Color(0, 255, 0), "o", Color(0, 0, 255), "r", Color(75, 0, 130), "d ", Color(148, 0, 211), "B", Color(255, 0 , 0), "o", Color(255, 127, 0), "t", Color(255, 255, 0), "!", Color( 255, 255, 255 ), " Congratulations")
 
 	local WRSOUND = WRSOUND.Enabled:GetBool()
 	if !WRSOUND then return end
@@ -1427,3 +1428,32 @@ concommand.Add("_togglegunsounds", function()
 	local gunshots = GetConVar("kawaii_gunsounds")
 	gunshots:SetInt(gunshots:GetInt() == 1 and 0 or 1)
 end)
+
+-- Bot Pathing: By Gravious, ported by Niflheimrx --
+-- This is here because I don't want to fix the mess at the top of this file, and I want it to be efficient clientsided --
+do
+	local trailConfig = {
+		["blue"] = CreateClientConVar("kawaii_trail_blue", "0", true, false, "When replay trailing, set the trail color to blue when you are faster than the trail speed.", 0, 1),
+		["range"] = CreateClientConVar("kawaii_trail_range", "0", true, false, "On the trailing replay, increase the visibility of the trails", 0, 1),
+		["ground"] = CreateClientConVar("kawaii_trail_ground", "0", true, false, "On the trailing replay, show trails only when the trail is on the ground", 0, 1),
+		["vague"] = CreateClientConVar("kawaii_trail_vague", "0", true, false, "On the trailing replay, show trails transparent", 0, 1),
+		["label"] = CreateClientConVar("kawaii_trail_label", "0", true, false, "On the trailing replay, hide trail markers", 0, 1),
+		["hud"] = CreateClientConVar("kawaii_trail_hud", "0", true, false, "On the trailing replay, hide the trail hud", 0, 1),
+	}
+
+	local function UpdateSettings()
+		for _,ent in ipairs(ents.FindByClass "game_point") do
+			ent:LoadConfig()
+		end
+	end
+
+	for _,cvar in pairs(trailConfig) do
+		cvars.AddChangeCallback(cvar:GetName(), function()
+			UpdateSettings()
+		end)
+	end
+
+	function Client:GetTrailConfig(name)
+		return trailConfig[name]:GetBool()
+	end
+end

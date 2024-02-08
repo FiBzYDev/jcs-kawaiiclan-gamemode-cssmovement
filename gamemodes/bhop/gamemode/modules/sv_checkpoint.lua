@@ -6,7 +6,6 @@ Checkpoints = {}
 
 -- SetUp 
 function Checkpoints:SetUp(pl)
-
 	if (not pl.checkpoints) then 
 		pl.checkpoints = {}
 		pl.checkpoint_current = 0
@@ -20,9 +19,10 @@ function Checkpoints:SetUp(pl)
 		Core:Send(pl, "Print", {"Timer", "Your timer has been stopped due to the use of checkpoints."})
 	end
 
+	pl:SetNWInt("inPractice", true)
+
 	-- Timer?
 	if (pl.Tn) or (pl.Tb) then 
-		pl:SetNWInt("inPractice", true)
 		pl:StopAnyTimer()
 	end
 end
@@ -85,16 +85,6 @@ end
 -- Save
 function Checkpoints:Save(pl)
 	-- Set up if not already
-	if pl.Style == 2 then return end
-	if pl.Style == 3 then return end
-	if pl.Style == 4 then return end
-	if pl.Style == 5 then return end
-	if pl.Style == 6 then return end
-	if pl.Style == 7 then return end
-	if pl.Style == 8 then return end
-	if pl.Style == 9 then return end
-	if pl.Style == 10 then return end
-
 	self:SetUp(pl)
 
 	-- Save
@@ -106,7 +96,7 @@ function Checkpoints:Save(pl)
 	local current = self:GetCurrent(pl)
 
 	if (#pl.checkpoints > 29) then 
-		Core:Send(pl, "Print", {"Timer", "Sorry, you're only allowed a maximum on 30 checkpoints!"})
+		Core:Send(pl, "Print", {"Timer", "Sorry, you are only allowed a maximum of 30 checkpoints!"})
 		return 
 	end
 
@@ -192,6 +182,12 @@ end
 -- Also why not always add commands in modules? It's cleaner.
 local function CheckpointOpen(pl, args)
 	UI:SendToClient(pl, "checkpoints")
+	
+	if (not practice) then 
+		Core:Send(pl, "Print", {"Timer", "Your timer has been stopped due to the use of checkpoints."})
+	end
+
+	pl:SetNWInt("inPractice", true)
 
 	if (pl.checkpoints) then 
 		UI:SendToClient(pl, "checkpoints", true, Checkpoints:GetCurrent(pl), #pl.checkpoints)
@@ -199,7 +195,7 @@ local function CheckpointOpen(pl, args)
 
 	-- Warning
 	if (pl.Tn) or (pl.Tb) or (not pl:GetNWInt("inPractice", false)) then 
-		Core:Send(pl, "Print", {"Timer", "Warning: The use of checkpoints will disable your timer."})
+		Core:Send(pl, "Print", {"Timer", "Warning: using checkpoint will deactivate your timer."})
 	end
 end
 Command:Register({"cp", "checkpoints", "cps"}, CheckpointOpen)
