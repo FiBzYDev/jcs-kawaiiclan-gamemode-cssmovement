@@ -88,7 +88,7 @@ local function CreateScoreboard()
 			surface.DrawRect(0, 0, width, height)
 			surface.SetDrawColor(text22)
 
-			surface.SetDrawColor(Settings:GetValue("Outlines"))
+			surface.SetDrawColor(outlines)
 			surface.DrawOutlinedRect(0, 0, width, height)
 
 			surface.SetDrawColor(text22)
@@ -157,7 +157,7 @@ local function CreateScoreboard()
 
 			surface.SetDrawColor(isBot and SCORE_ACCENT or Color( 0, 0, 0, 0 ))
 			surface.DrawRect(0, 0, width, 37)
-			surface.SetDrawColor(Settings:GetValue("Outlines"))
+			surface.SetDrawColor(outlines)
 
 			if outlines then
 				surface.DrawOutlinedRect(0, 0, width, height)

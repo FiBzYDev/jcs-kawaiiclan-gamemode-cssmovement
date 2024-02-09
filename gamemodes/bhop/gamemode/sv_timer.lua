@@ -387,6 +387,43 @@ function Timer:AddRecord( ply, nTime, nOld )
 			Timer:RecalculateInitial( ply.Style )
 		end
 
+		-- Niflheimrx: Webhook, posts only for Normal/Bonus --
+		if (nID == 1) and (ply.Style == _C.Style.Normal or ply.Style == _C.Style.Bonus) and DISCORD_WR_WEBHOOK then
+			local playerName = ply:Nick()
+			local playerSteam = ply:SteamID()
+			local playerSteam64 = ply:SteamID64()
+			local time = Timer:Convert(nTime)
+			local sync, jumps = (ply.LastSync or 0) .. "%", Core.Util:GetPlayerJumps(ply)
+
+			local embedColor = (ply.Style == _C.Style.Normal and 107790 or 65504)
+			local title = "Nouveau " .. Core:StyleName(ply.Style) .. " Record | " .. game.GetMap()
+			local description = string.format("[%s](https://steamcommunity.com/profiles/%s) (%s) a eu le #1 record !\nTemps: %s\nSync: %s Sauts: %d", playerName, playerSteam64, playerSteam, time, sync, jumps)
+			local timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
+
+			local compiled = {
+				content = nil,
+				embeds = {{title = title, description = description, color = embedColor, timestamp = timestamp}},
+				attachments = {}
+			}
+
+			reqwest({
+				method = "POST",
+				url = DISCORD_WR_WEBHOOK,
+				body = util.TableToJSON(compiled, false),
+				headers = {
+					["content-type"] = "application/json",
+					["user-agent"] = "insomnia/2021.6.0",
+				},
+				timeout = 5,
+				success = function(status, body, headers)
+					print("Discord WR Webhook successfully posted")
+				end,
+				failed = function(err, errExt)
+					print("Discord WR Webhook unsuccessfully posted")
+				end
+			})
+		end
+
 		local p = Bot.PerStyle[ ply.Style ] or 0
 		if p > 0 and nID <= p then
 			Bot:SetWRPosition( ply.Style )
@@ -437,6 +474,7 @@ function Timer:RecalculateInitial( id )
 	end
 
 	Core:Broadcast( "Timer", { "Initial", IR } )
+	WRSFX_Broadcast()
 end
 
 function Timer:SendInitialRecords( ply )

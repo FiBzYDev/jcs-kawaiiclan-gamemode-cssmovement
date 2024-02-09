@@ -94,19 +94,26 @@ function UI:NumberedUIPanel(title, ...)
 	-- Paint the panel
 	-- Todo: Themes, the style should be changeable
 	pan.Paint = function(self, width, height)
-		local primary = Color(43, 43, 43)
-		local outline = Color(32, 32, 32)
+		local primary = Settings:GetValue("PrimaryCol")
+		local text2 = Settings:GetValue("TextCol2")
+		local outline = Settings:GetValue("Outlines")
 		local text = Settings:GetValue("TextCol")
 
 		-- Box
+		surface.SetDrawColor(outline)
+		surface.DrawOutlinedRect(0, 0, width, height)
+
 		surface.SetDrawColor(primary)
 		surface.DrawRect(0, 0, width, height)
 
-		surface.SetDrawColor(Color( 32, 32, 32 ))
+		surface.SetDrawColor(text2)
 		surface.DrawRect(0, 0, width, 25)
 
-		surface.SetDrawColor(outline)
+		surface.SetDrawColor(text2)
 		surface.DrawOutlinedRect(0, 0, width, height, 10)
+
+		surface.SetDrawColor(outline)
+		surface.DrawOutlinedRect(0, 0, width, height)
 
 		-- Title
 		draw.SimpleText(self.title, "hud.title", 10, 15, text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)

@@ -728,3 +728,13 @@ function Bot.HandleSpecialBot( _, szType, _, data )
 		return BotData[data], nil, nil, BotData[data][4], BotData[data][5], BotInfo[data]
 	end
 end
+
+-- Niflheimrx: I'm so fucking lazy --
+-- Imported from the pg gamemode, but literally only keeps one feature of the function --
+function Bot.HandleSpecialBot( _, szType, _, data )
+	if szType == "Fetch" then
+		if !BotData[data] then return end
+
+		return BotData[data], nil, nil, BotData[data][4], BotData[data][5], BotInfo[data]
+	end
+end

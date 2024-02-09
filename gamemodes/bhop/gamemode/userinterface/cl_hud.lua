@@ -8,6 +8,154 @@ local Color = Color
 -- ConVar to select which HUD we want to use
 local selected_hud = CreateClientConVar("kawaii_hud", 4, true, false)
 
+
+local fb, lp = bit.band, LocalPlayer
+local isPressing = function( ent, bit ) return ent:KeyDown( bit ) end
+
+local syncData, syncAxis, syncStill = "", 0, 0
+local spectatorBits = 0
+local isSpecPressing = function( bit ) return fb( spectatorBits, bit ) > 0 end
+
+local jumpTime = 0
+local jumpDisplay = 0.25
+
+local function norm( i ) if i > 180 then i = i - 360 elseif i < -180 then i = i + 360 end return i end
+ShowKeys = {}
+ShowKeys.Enabled = CreateClientConVar( "kawaii_showkeys", "1", true, false, "Displays the movement keys that are being pressed by the player." )
+ShowKeys.Position = CreateClientConVar( "kawaii_showkeys_pos", "1", true, false, "Changes the position of the showkeys module, default is 0 (center)." )
+ShowKeys.Color = color_white
+local keyStrings = {
+  [512] = input.LookupBinding( "+moveleft" ) or "A",
+  [1024] = input.LookupBinding( "+moveright" ) or "D",
+  [8] = input.LookupBinding( "+forward" ) or "W",
+  [16] = input.LookupBinding( "+back" ) or "",
+  [4] = "+ DUCK",
+  [2] = "+ JUMP",
+  [128] = "<",
+  [256] = ">",
+}
+
+local keyPositions = {
+  [0] = {
+    [512] = { ScrW() / 2 - 30, ScrH() / 2 },
+    [1024] = { ScrW() / 2 + 30, ScrH() / 2 },
+    [8] = { ScrW() / 2, ScrH() / 2 - 30 },
+    [16] = { ScrW() / 2, ScrH() / 2 + 30 },
+    [4] = { ScrW() / 2 - 60, ScrH() / 2 + 30 },
+    [2] = { ScrW() / 2 + 60, ScrH() / 2 + 30 },
+    [128] = { ScrW() / 2 - 60, ScrH() / 2 },
+    [256] = { ScrW() / 2 + 60, ScrH() / 2 }
+  },
+  [1] = {
+    [512] = { ScrW() - 120 - 30, ScrH() - 120 },
+    [1024] = { ScrW() - 120 + 30, ScrH() - 120 },
+    [8] = { ScrW() - 120, ScrH() - 120 - 30 },
+    [16] = { ScrW() - 120, ScrH() - 120 + 30 },
+    [4] = { ScrW() - 120 - 60, ScrH() - 120 + 30 },
+    [2] = { ScrW() - 120 + 60, ScrH() - 120 + 30 },
+    [128] = { ScrW() - 120 - 60, ScrH() - 120 },
+    [256] = { ScrW() - 120 + 60, ScrH() - 120 }
+  }
+}
+
+local function DisplayKeys()
+  local wantsKeys = ShowKeys.Enabled:GetBool()
+  if !wantsKeys then return end
+  kawaiihud = GetConVarNumber("obvibhop_hud")
+	-- Simple JHud
+	if kawaiihud == 1 then return end
+	if kawaiihud == 2 then return end
+	if kawaiihud == 5 then return end
+	if kawaiihud == 4 then return end
+
+  local lpc = lp()
+  if !IsValid( lpc ) then return end
+
+  local currentPos = ShowKeys.Position:GetInt()
+
+  local isSpectating = lpc:Team() == ts
+  local testSubject = lpc:GetObserverTarget()
+  local isValidSpectator = isSpectating and IsValid( testSubject ) and testSubject:IsPlayer()
+
+  if isValidSpectator then
+    for key, text in pairs( keyStrings ) do
+      local willDisplay = isSpecPressing(key)
+      if (key == 2) and (jumpTime > RealTime()) then
+        local pos = keyPositions[currentPos][key]
+        draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+        continue
+      end
+
+      if !willDisplay then continue end
+
+      local pos = keyPositions[currentPos][key]
+      text = string.upper( text )
+
+      if (key == 2) then
+        jumpTime = RealTime() + jumpDisplay
+      end
+
+      draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+
+    local currentAngle = testSubject:EyeAngles().y
+    local diff = norm( currentAngle - syncAxis )
+    if diff > 0 then
+      syncStill = 0
+
+      local pos = keyPositions[currentPos][128]
+      draw.SimpleText( "<", "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    elseif diff < 0 then
+      syncStill = 0
+
+      local pos = keyPositions[currentPos][256]
+      draw.SimpleText( ">", "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    else
+      syncStill = syncStill + 1
+    end
+
+    syncAxis = currentAngle
+  else
+    for key, text in pairs( keyStrings ) do
+      local willDisplay = isPressing(lpc, key)
+      if !willDisplay then continue end
+
+      local pos = keyPositions[currentPos][key]
+      text = string.upper( text )
+
+      draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    end
+
+    local currentAngle = lpc:EyeAngles().y
+    local diff = norm( currentAngle - syncAxis )
+    if diff > 0 then
+      syncStill = 0
+
+      local pos = keyPositions[currentPos][128]
+      draw.SimpleText( "<", "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    elseif diff < 0 then
+      syncStill = 0
+
+      local pos = keyPositions[currentPos][256]
+      draw.SimpleText( ">", "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    else
+      syncStill = syncStill + 1
+    end
+
+    syncAxis = currentAngle
+
+    local pos = { ScrW() - 15, ScrH() - 15 }
+  end
+end
+hook.Add( "HUDPaint", "bhop.ShowKeys", DisplayKeys )
+
+local function ReceiveSpecByte()
+  spectatorBits = net.ReadUInt( 11 )
+end
+net.Receive( "bhop_ShowKeys", ReceiveSpecByte )
+
 -- Font
 surface.CreateFont( "HUDTimer", { size = 17, weight = 800, font = "Trebuchet24" } )
 surface.CreateFont( "HUDTimer2", { size = 18, weight = 100000, font = "Lato" } )	
@@ -697,7 +845,104 @@ HUD.Themes = {
 		local INNER = Settings:GetValue("SecondaryCol")
 		local TEXT = Settings:GetValue("TextCol")
 		local BAR = Settings:GetValue("AccentCol")
-		local OUTLINE = Settings:GetValue("Outlines")
+		local OUTLINE = Settings:GetValue("Outlines") or Color(0, 0, 0, 0)
+
+		local function DisplayKeys5()
+			ShowKeys2 = {}
+			ShowKeys2.Enabled2 = CreateClientConVar( "kawaii_showkeys_flow2", "0", true, false, "Displays the movement keys that are being pressed by the player." )
+			ShowKeys2.Position2 = CreateClientConVar( "kawaii_showkeys_pos_flow2", "0", true, false, "Changes the position of the showkeys module, default is 0 (center)." )
+			ShowKeys2.Color2 = color_white
+			
+			local wantsKeys = ShowKeys2.Enabled2:GetBool()
+			if !wantsKeys then return end
+			
+			  local lpc = lp()
+			
+			  local currentPos = 0
+			
+			  local isSpectating = lpc:Team() == ts
+			  local testSubject = lpc:GetObserverTarget()
+			  local isValidSpectator = isSpectating and IsValid( testSubject ) and testSubject:IsPlayer()
+			
+			  if isValidSpectator then
+				for key, text in pairs( keyStrings ) do
+				  local willDisplay = isSpecPressing(key)
+				  if (key == 2) and (jumpTime > RealTime()) then
+					local pos = keyPositions[currentPos][key]
+					draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			
+					continue
+				  end
+			
+				  if !willDisplay then continue end
+			
+				  local pos = keyPositions[currentPos][key]
+				  text = string.upper( text )
+			
+				  if (key == 2) then
+					jumpTime = RealTime() + jumpDisplay
+				  end
+			
+				  draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				end
+			
+				local currentAngle = testSubject:EyeAngles().y
+				local diff = norm( currentAngle - syncAxis )
+				if diff > 0 then
+				  syncStill = 0
+			
+				  local pos = keyPositions[currentPos][128]
+				  draw.SimpleText( "<", "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				elseif diff < 0 then
+				  syncStill = 0
+			
+				  local pos = keyPositions[currentPos][256]
+				  draw.SimpleText( ">", "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				else
+				  syncStill = syncStill + 1
+				end
+			
+				syncAxis = currentAngle
+			  else
+				for key, text in pairs( keyStrings ) do
+				  local willDisplay = isPressing(lpc, key)
+				  if !willDisplay then continue end
+			
+				  local pos = keyPositions[currentPos][key]
+				  text = string.upper( text )
+			
+				  draw.SimpleText( text, "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			
+				end
+			
+				local currentAngle = lpc:EyeAngles().y
+				local diff = norm( currentAngle - syncAxis )
+				if diff > 0 then
+				  syncStill = 0
+			
+				  local pos = keyPositions[currentPos][128]
+				  draw.SimpleText( "<", "HUDTimerMedThick", pos[1], pos[2], ShowKeys2.Color2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				elseif diff < 0 then
+				  syncStill = 0
+			
+				  local pos = keyPositions[currentPos][256]
+				  draw.SimpleText( ">", "HUDTimerMedThick", pos[1], pos[2], ShowKeys.Color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				else
+				  syncStill = syncStill + 1
+				end
+			
+				syncAxis = currentAngle
+			
+				local pos = { ScrW() - 15, ScrH() - 15 }
+			  end
+			end
+			hook.Add( "HUDPaint", "bhop.ShowKeys", DisplayKeys5 )
+			
+			local function ReceiveSpecByte()
+			  spectatorBits = net.ReadUInt( 11 )
+			end
+			net.Receive( "bhop_ShowKeys5", ReceiveSpecByte )
+
 
 		-- Strafe HUD?
 		if (data.strafe) then 
