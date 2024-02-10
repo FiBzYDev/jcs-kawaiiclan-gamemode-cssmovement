@@ -37,6 +37,22 @@ if SERVER then
 	local tempCache     = {}
 	local tempIndex     = 1
 
+	Command:Register( { "paintcolor" }, function( ply, args )
+		if !ply.IsVIP then
+			return Core:Send( ply, "Print", { "Notification", "You need to be an Elevated VIP in order to use this." } )
+		end
+
+		if !ply.PaintColor then ply.PaintColor = "red" end
+		local newColor = string.lower( args[1] )
+		local isValidPaint = colors[newColor]
+		if !isValidPaint then
+			Core:Send( ply, "Print", { "Notification", "This is an invalid color, locate your choices in the Donators tab inside the !surftimer panel [color: " .. newColor .. "]" } )
+		return end
+
+		ply.PaintColor = newColor
+		Core:Send( ply, "Print", { "Notification", "Your new paint color has changed to " .. newColor .. "." } )
+	end )
+
 	-- Paint command
 	concommand.Add("sm_paint", function(ply)
 		if !ply.IsVIP then return end
@@ -124,6 +140,7 @@ if CLIENT then
 			util.Decal("paint_" .. col, pos - norm, pos)
 		end
 
+		Surf:Notify( "Debug", "Paint history request received [Size: " .. size .. "]" )
 	end)
 
 	local cooldown_time = 0.05

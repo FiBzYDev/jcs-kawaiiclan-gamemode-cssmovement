@@ -316,19 +316,21 @@ function SurfTimer.Open()
 		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 1 ), text = "Show Jump Hud", convar = "kawaii_secret", tip = "Toggles the visibility of the Jump Hud in your timer" } )
 		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 2 ), text = "Show Old Jump Hud", convar = "kawaii_jhudold", tip = "Toggles the visibility of the Older Jump Hud in your timer" } )
 		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 3 ), text = "Enable Record Sounds", convar = "kawaii_recordsound", tip = "Toggles the record sounds on the server" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 4 ), text = "Show Anti-Cheats", convar = "kawaii_anticheats", tip = "If enabled, shows the Anti-Cheat Zones, otherwise hidden" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 5 ), text = "Show Spectators", convar = "sl_showspec", tip = "Toggles the visibility of the spectator listings" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 6 ), text = "Show Keys", convar = "kawaii_showkeys", tip = "Toggles the visibility of the showkeys plugin" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 7 ), text = "Enable Mouse Smoothing", convar = "kawaii_mousesmoothing", tip = "Edits the Mose Sensitivity to a smoother value" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 8 ), text = "Show Units in Center", convar = "kawaii_showkeys", tip = "Displays the unit velocity in the middle of the screenspace" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 9 ), text = "Show Total Time", convar = "kawaii_showkeys", tip = "Messages you the total time of your run when completing a stage" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 10 ), text = "Show Zones", convar = "kawaii_showzones", tip = "Toggles the checkpoint type on the saveloc plugin" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 11 ), text = "Show Speed Stats", convar = "kawaii_showkeys", tip = "Toggles the visibility the zone" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 12 ), text = "Enable Strafe Trainer", convar = "kawaii_strafetrainer", tip = "Enables the strafetrainer display" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 13 ), text = "Suppress Viewpunch", convar = "kawaii_suppress_viewpunch", tip = "Enables the Suppress Viewpunch" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 14 ), text = "Suppress Viewpunch Weapon", convar = "kawaii_suppress_viewpunch_wep_css", tip = "Enables the Weapon Suppress Viewpunch" } )
-		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 15 ), text = "CS:S Weapon Reload Loop", convar = "kawaii_css_reloading", tip = "Enables the CS:S Weapon Loop Reload" } )
-		SMPanels.EndList( { parent = panParent, x = bezel, y = bezel + ( padSize * 16 ), text = "", convar = "kawaii_css_reloading", tip = "Enables the CS:S Weapon Loop Reload" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 4 ), text = "Enable Map Change Show Triggers", convar = "kawaii_mapchangestriggers", tip = "Toggles show triggers on map change on the server" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 5 ), text = "Show Anti-Cheats", convar = "kawaii_anticheats", tip = "If enabled, shows the Anti-Cheat Zones, otherwise hidden" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 6 ), text = "Show Spectators", convar = "sl_showspec", tip = "Toggles the visibility of the spectator listings" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 7 ), text = "Show Keys", convar = "kawaii_showkeys", tip = "Toggles the visibility of the showkeys plugin" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 8 ), text = "Show Middle Flow Keys", convar = "kawaii_showkeys_flow2", tip = "Toggles the visibility of the Flow showkeys plugin" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 9 ), text = "Enable Mouse Smoothing", convar = "kawaii_mousesmoothing", tip = "Edits the Mose Sensitivity to a smoother value" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 10 ), text = "Show Units in Center", convar = "kawaii_showkeys", tip = "Displays the unit velocity in the middle of the screenspace" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 11 ), text = "Show Total Time", convar = "kawaii_showkeys", tip = "Messages you the total time of your run when completing a stage" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 12 ), text = "Show Zones", convar = "kawaii_showzones", tip = "Toggles the checkpoint type on the saveloc plugin" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 13 ), text = "Show Speed Stats", convar = "kawaii_showkeys", tip = "Toggles the visibility the zone" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 14 ), text = "Enable Strafe Trainer", convar = "kawaii_strafetrainer", tip = "Enables the strafetrainer display" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 15 ), text = "Suppress Viewpunch", convar = "kawaii_suppress_viewpunch", tip = "Enables the Suppress Viewpunch" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 16 ), text = "Suppress Viewpunch Weapon", convar = "kawaii_suppress_viewpunch_wep_css", tip = "Enables the Weapon Suppress Viewpunch" } )
+		SMPanels.SettingBox( { parent = panParent, x = bezel, y = bezel + ( padSize * 17 ), text = "CS:S Weapon Reload Loop", convar = "kawaii_css_reloading", tip = "Enables the CS:S Weapon Loop Reload" } )
+		SMPanels.EndList( { parent = panParent, x = bezel, y = bezel + ( padSize * 18 ), text = "", convar = "kawaii_css_reloading", tip = "Enables the CS:S Weapon Loop Reload" } )
 
 		local tmSize = panParent:GetWide() - Interface:GetTextWidth( { "Change Theme" }, Interface:GetFont() )
 		local emSize = panParent:GetWide() - Interface:GetTextWidth( { "Set Decimal Count" }, Interface:GetFont() )
@@ -482,7 +484,7 @@ function SurfTimer.Open()
 		end
 
 		local isVIP = LocalPlayer():GetNWBool( "VIPStatus" )
-		if !isVIP then
+		if isVIP then
 			panParent.Paint = function( self, w, h )
 				draw.SimpleText( "This requires a donator subscription running", Interface:GetFont(), bezel, bezel, color_white )
 				draw.SimpleText( "You can donate to the server by using !donate", Interface:GetFont(), bezel, bezel + (fontHeight * 1), color_white )
@@ -559,14 +561,14 @@ function SurfTimer.OpenCustomMenu()
 	panel = nil
 
 	local size = SurfTimer.CustomSize[Interface.Scale]
-	panel = SMPanels.HoverFrame( { title = "Custom Scheme Menu", subTitle = "Customize your Timer Experience", center = true, w = size[1], h = size[2] } )
+	panel = SMPanels.HoverFrame( { title = "Custom Scheme Menu", subTitle = "Customize your Timer Experience", center = true, w = 600, h = 300 } )
 
 	local writeable = panel.Page
 	local bezel = Interface:GetBezel( "Medium" )
 	local padSize = SMPanels.ConvarSize[Interface.Scale]
 
-	local currentColor = Color( GetConVar( "sl_custom_r" ):GetInt(), GetConVar( "sl_custom_g" ):GetInt(), GetConVar( "sl_custom_b" ):GetInt())
-	SMPanels.ColorPalette( { parent = writeable, x = bezel, y = bezel, w = 200, h = 120, convar = "sl_custom_", default = currentColor } )
+	local SurfHud = Settings:GetValue("SurfHud", Color(0,0,0,0))
+	local currentColor = Settings:GetValue("SurfHud")
 
 	SMPanels.SettingBox( { parent = writeable, x = bezel, y = bezel + 100 + (padSize * 1), text = "Enable Color Accents", convar = "sl_custom_accent", tip = "Fills the entire menu render with an additional color layer" } )
 	SMPanels.SettingBox( { parent = writeable, x = bezel, y = bezel + 100 + (padSize * 2), text = "Enable Rainbow Mode", convar = "sl_custom_rainbow", tip = "Dynamically changes the colors to fully transition through the entire color spectrum" } )
@@ -574,20 +576,20 @@ function SurfTimer.OpenCustomMenu()
 
 	local CSHUDLabel = vgui.Create( "DLabel", writeable )
 	CSHUDLabel:SetSize( 350, 220 )
-	CSHUDLabel:SetPos( 300, bezel )
-	CSHUDLabel:SetText( "Theme Preview" )
+	CSHUDLabel:SetPos( 180, bezel )
+	CSHUDLabel:SetText( "Chose your surf theme color, !theme" )
 	CSHUDLabel.Paint = function( _, w, h )
-		local previewColor = Color( 0, 0, 0, 110 )
-		if GetConVar( "sl_custom_accent" ):GetBool() then
-			previewColor = Color( Custom.r, Custom.g, Custom.b, 30 )
+		local previewColor = Settings:GetValue("SurfHud")
+		if Color( 0, 0, 0, 110 ) then
+			previewColor = Settings:GetValue("SurfHud")
 		end
 
-		draw.RoundedBox( 8, 0, 0, 230, 95, previewColor )
-		draw.SimpleText( "Time:", "HUDTimer", 0 + 12, 0 + 20, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.RoundedBox( 8, 0, 0, 230, 95, currentColor )
+		draw.SimpleText( "Temps:", "HUDTimer", 0 + 12, 0 + 20, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( "PB:", "HUDTimer", 0 + 12, 0 + 45, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( Timer:Convert( LocalPlayer():GetNWFloat( "Record", 0 ) ), "HUDTimer", 0 + 64 + 12, 0 + 20, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( Timer:Convert( LocalPlayer():GetNWFloat( "Record", 0 ) ), "HUDTimer", 0 + 64 + 12, 0 + 45, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( "3500 u/s", "HUDSpeed", 0 + 115, 0 + 73, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.RoundedBox( 0, 0 + 12, 0 + 83, 206, 1, Color( Custom.r, Custom.g, Custom.b, 255 ) )
+		draw.RoundedBox( 0, 0 + 12, 0 + 83, 206, 1, currentColor )
 	end
 end

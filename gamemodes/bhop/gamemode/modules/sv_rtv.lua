@@ -8,7 +8,7 @@ RTV.Extends = 0
 RTV.Nominations = {}
 RTV.LatestList = {}
 
-RTV.MapLength = 40 * 60
+RTV.MapLength = 90 * 60
 RTV.MapInit = CurTime()
 RTV.MapEnd = 0
 RTV.MapVotes = 0
@@ -196,7 +196,7 @@ function RTV:Vote( ply )
 	ply.Rocked = true
 
 	RTV.MapVotes = RTV.MapVotes + 1
-	RTV.Required = math.ceil( #player.GetHumans() * ( 2 / 3 ) )
+	RTV.Required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * ( 2 / 3 ) )
 	local nVotes = RTV.Required - RTV.MapVotes
 	Core:Broadcast( "Print", { "Notification", Lang:Get( "VotePlayer", { ply:Name(), nVotes, nVotes == 1 and "vote" or "votes" } ) } )
 
@@ -214,7 +214,7 @@ function RTV:Revoke( ply )
 		ply.Rocked = false
 
 		RTV.MapVotes = RTV.MapVotes - 1
-		RTV.Required = math.ceil( #player.GetHumans() * ( 2 / 3 ) )
+		RTV.Required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * ( 2 / 3 ) )
 		local nVotes = RTV.Required - RTV.MapVotes
 		Core:Broadcast( "Print", { "Notification", Lang:Get( "VoteRevoke", { ply:Name(), nVotes, nVotes == 1 and "vote" or "votes" } ) } )
 	else
@@ -270,7 +270,7 @@ function RTV:ReceiveVote( ply, nVote, nOld )
 
 	local nAdd = 1
 	if ply.IsVIP and ply.VIPLevel and ply.VIPLevel >= Admin.Level.Elevated then
-		nAdd = 2
+		nAdd = 1
 	end
 
 	if not nOld then
@@ -310,12 +310,33 @@ function RTV:Who( ply )
 		end
 	end
 
-	RTV.Required = math.ceil( #player.GetHumans() * ( 2 / 3 ) )
+	RTV.Required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * ( 2 / 3 ) )
 	Core:Send( ply, "Print", { "Notification", Lang:Get( "VoteList", { RTV.Required, #Voted, string.Implode( ", ", Voted ), #NotVoted, string.Implode( ", ", NotVoted ) } ) } )
 end
 
+function RTV:CheckVotes()
+	for _,ply in ipairs(player.GetHumans()) do
+		if ply.AFK.Away and ply.Rocked then
+			ply.Rocked = false
+
+			Core:Send( ply, "Print", { "Notification", Lang:Get( "RTVAFK" ) } )
+
+			RTV.MapVotes = RTV.MapVotes - 1
+			RTV.Required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * ( 2 / 3 ) )
+		end
+	end
+
+	local required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * (2 / 3))
+	if (RTV.MapVotes <= 1) then return end -- If we don't have any votes this would basically make it so RTV would change the map too frequently --
+
+	if RTV.MapVotes >= required then
+		RTV:StartVote()
+	end
+end
+
+
 function RTV:Check( ply )
-	RTV.Required = math.ceil( #player.GetHumans() * ( 2 / 3 ) )
+	RTV.Required = math.ceil((#player.GetHumans() - Spectator:GetAFK()) * ( 2 / 3 ) )
 	local nVotes = RTV.Required - RTV.MapVotes
 	Core:Send( ply, "Print", { "Notification", Lang:Get( "VoteCheck", { nVotes, nVotes == 1 and "vote" or "votes" } ) } )
 end

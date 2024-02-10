@@ -205,6 +205,18 @@ timer.Create( "dicy", 2, 1, function()
 	end
 end)
 
+KAWAIISTMAPCHANGE = {}
+KAWAIISTMAPCHANGE.Enabled = CreateClientConVar( "kawaii_mapchangestriggers", "1", true, false, "Enables map change show triggers" )
+
+local KAWAIISTMAPCHANGE = KAWAIISTMAPCHANGE.Enabled:GetBool()
+timer.Create( "mapchangest", 1, 1, function()
+	for k,v in pairs(player.GetAll()) do
+		if KAWAIISTMAPCHANGE then
+			v:ConCommand( "showtriggers_enabled 1" )
+		end
+	end
+end)
+
 timer.Create( "mody", 2, 1, function()
 	for k,v in pairs(player.GetAll()) do
 	if game.GetMap() == "bhop_moderated" then

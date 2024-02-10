@@ -5,38 +5,111 @@ Spectator.Modes = {
 	OBS_MODE_ROAMING
 }
 
--- AFK Checker
-local PlayerAFK = {}
-local function CheckAFKs()
-	for _,p in pairs( player.GetHumans() ) do
-		if p.IsVIP then
-			if p.VIPLastCheck and CurTime() - p.VIPLastCheck < 595 then continue end
-			if not p.VIPLastCheck then
-				p.VIPLastCheck = CurTime()
-				continue
-			else
-				p.VIPLastCheck = CurTime()
+--[[
+	Author: Niflheimrx
+	Description: Enhanced AFK Extension, it will recount RTV votes and send a player to spectator if they are AFK
+]]--
+
+do
+	local SMAFK = {}
+
+	-- Easy calls --
+	local ct = CurTime
+
+	-- How long in minutes before the player is considered AFK
+	local afkMinutes = 5
+
+	-- How long in minutes before the player will get kicked for being afk (when the server is full) --
+	local afkKickMinutes = 999
+
+	-- Should admins bypass this feature? And should they be notified when a player is AFK --
+	local adminBypass = false
+	local adminNotify = false
+
+	-- Do the AFK hooks --
+	hook.Add("PlayerInitialSpawn", "sm_afk_playerinitialspawn", function(ply)
+		ply.AFK = {
+			Away = false,
+			LastActivity = ct()
+		}
+	end)
+
+	hook.Add("PlayerSay", "sm_afk_playersay", function(ply)
+		ply.AFK.LastActivity = ct()
+
+		if ply.AFK.Away then
+			SMAFK:SetAFK(ply, false)
+		end
+	end)
+
+	hook.Add("KeyPress", "sm_afk_keypress", function(ply)
+		ply.AFK.LastActivity = ct()
+
+		if ply.AFK.Away then
+			SMAFK:SetAFK(ply, false)
+		end
+	end)
+
+	local function IsImmune(ply)
+		return adminBypass and Admin:CanAccess(ply, Admin.Level.Moderator)
+	end
+
+	-- AFK Functions --
+	function SMAFK:SetAFK(ply, afk)
+		ply.AFK.Away = afk
+		ply:SetNWBool("sm_afk", afk)
+
+		local name = ply:Nick()
+		local admins = Admin:GetOnlineAdmins(ply)
+
+		if adminNotify then
+			Core:Send( ply, "Anti-AFK", { "You are AFK." } )
+		else
+			Core:Send( ply, "Anti-AFK", { "You are AFK." } )
+		end
+
+	end
+
+	function SMAFK:CheckAFK()
+		for _,ply in ipairs(player.GetHumans()) do
+			if (!ply.AFK.Away and !IsImmune(ply) and (ct() - ply.AFK.LastActivity) > (afkMinutes * 60)) then
+				SMAFK:SetAFK(ply, true)
 			end
 		end
-		
-		if PlayerAFK[ p ] then
-			if c == 0 then
-				p.DCReason = "AFK for too long"
-				p:Kick( "You have been kicked for being AFK too long" )
-			end
-		else
-			if p.ConnectedAt and CurTime() - p.ConnectedAt > 300 then
-				p.DCReason = "AFK for too long"
-				p:Kick( "You have been kicked for being AFK too long" )
+
+		RTV:CheckVotes()
+	end
+
+	function SMAFK:KickAFK()
+		if (player.GetCount() < game.MaxPlayers()) then return end -- Only kick when the server is full
+
+		for _,ply in ipairs(player.GetHumans()) do
+			if (ply.AFK.Away and !IsImmune(ply) and (ct() - ply.AFK.LastActivity) > (afkKickMinutes * 60)) then
+				ply.DCReason = "Kicked out for being AFK too long."
+				ply:Kick "You were kicked from the server for being AFK too long."
 			end
 		end
 	end
-	
-	PlayerAFK = {}
-end
-timer.Create( "CheckAFK", 7200, 0, CheckAFKs )
 
-function Spectator:AddChat( ply ) PlayerAFK[ ply ] = (PlayerAFK[ ply ] or 0) + 5 end
+	local function AFKController()
+		SMAFK:CheckAFK()
+		SMAFK:KickAFK()
+	end
+	timer.Create("sm_afk_controller", 60, 0, AFKController)
+
+	-- Get current amount of AFK players --
+	function Spectator:GetAFK()
+		local tab = {}
+
+		for _,ply in ipairs(player.GetHumans()) do
+			if ply.AFK.Away then
+				table.insert(tab, ply)
+			end
+		end
+
+		return #tab
+	end
+end
 
 local function GetAlive()
 	local d = {}
@@ -54,10 +127,8 @@ local function PlayerPressKey( ply, key )
 	if not IsValid( ply ) then return end
 	if ply:IsBot() then return end
 	
-	PlayerAFK[ ply ] = (PlayerAFK[ ply ] or 0) + 1
 	if ply:Team() != TEAM_SPECTATOR then return end
-	PlayerAFK[ ply ] = PlayerAFK[ ply ] + 4
-	
+
 	if not ply.SpectateID then ply.SpectateID = 1 end
 	if not ply.SpectateType then ply.SpectateType = 1 end
 	

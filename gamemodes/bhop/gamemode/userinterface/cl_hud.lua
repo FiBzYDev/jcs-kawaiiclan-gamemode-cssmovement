@@ -61,7 +61,7 @@ local keyPositions = {
 local function DisplayKeys()
   local wantsKeys = ShowKeys.Enabled:GetBool()
   if !wantsKeys then return end
-  kawaiihud = GetConVarNumber("obvibhop_hud")
+  kawaiihud = GetConVarNumber("kawaii_hud")
 	-- Simple JHud
 	if kawaiihud == 1 then return end
 	if kawaiihud == 2 then return end
@@ -182,15 +182,15 @@ local function ConvertTime(ns)
 	end
 end
 
-local function cCTime(ns)
+function cCTime( ns )
 	ns = math.Round(ns, 4)
 
 	if ns > 3600 then
-		return fo( "%d:%.2d%.2d.%.3d", fl( ns / 3600 ), fl( ns / 60 % 60 ), fl( ns % 60 ), fl( ns * 1000 % 1000 ) )
+		return fo( "%d:%.2d:%.2d.%.3d", fl( ns / 3600 ), fl( ns / 60 % 60 ), fl( ns % 60 ), fl( ns * 10 % 10 ) )
 	elseif ns > 60 then 
-		return fo( "%.1d:%.2d.%.3d", fl( ns / 60 % 60 ), fl( ns % 60 ), fl( ns * 1000 % 1000 ) )
+		return fo( "%.1d:%.2d.%.3d", fl( ns / 60 % 60 ), fl( ns % 60 ), fl( ns * 10 % 10 ) )
 	else
-		return fo( "%.1d.%.3d", fl( ns % 60 ), fl( ns * 1000 % 1000 ) )
+		return fo( "%.1d.%.3d", fl( ns % 60 ), fl( ns * 10 % 10 ) )
 	end
 end
 
@@ -1123,6 +1123,11 @@ local secret = CreateClientConVar("kawaii_secret", 0, true)
 -- SSJ hud
 local fade = 0
 
+JHUDOLD = {}
+JHUDOLD.Enabled = CreateClientConVar( "kawaii_jhudold", "0", true, false, "JHud Old Pos" )
+
+local JHUDOLD = JHUDOLD.Enabled:GetBool()
+
 local function SSJ_HUD()
 	local jump, gain, speed, jss = unpack(JHudStatistics)
 
@@ -1215,10 +1220,6 @@ local function SSJ_HUD()
 		draw.SimpleText(gain, "JHUDMainBIG2", ScrW() / 2, (ScrH() / 2) - 60, color355, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	JHUDOLD = {}
-	JHUDOLD.Enabled = CreateClientConVar( "kawaii_jhudold", "0", true, false, "JHud Old Pos" )
-	
-	local JHUDOLD = JHUDOLD.Enabled:GetBool()
 	if JHUDOLD then
 		if gain == 0 then return end
 		if speed == 0 then return end
