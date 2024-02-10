@@ -553,24 +553,22 @@ function GM:ScoreboardShow()
 end
 
 function GM:ScoreboardHide()
-	CreateScoreboard()
+		CreateScoreboard()
+	if IsValid( scoreboard ) then 
+		scoreboard:Remove() 
+		scoreboard.IsClickable = false
+		gui.EnableScreenClicker(false)
+	end 
 end
-
 function GM:HUDDrawScoreBoard() end
 
-local CanCall = true
-
-hook.Add( "PlayerButtonDown", "SCOREBOARD::ButtonDown", function( ply, key )
-	if IsValid( menu ) and key == MOUSE_RIGHT and CanCall then
-		Pressed = !Pressed
-		CanCall = false
-		
-		gui.EnableScreenClicker( Pressed )
+hook.Add("CreateMove", "ClickableScoreBoard", function(cmd)
+	if not ( IsValid(scoreboard) and scoreboard:IsVisible() ) then return end
+	if not ( cmd:KeyDown(IN_ATTACK) or cmd:KeyDown(IN_ATTACK2) ) then return end
+	if not scoreboard.IsClickable then 
+		scoreboard.IsClickable = true
+		gui.EnableScreenClicker(true)
 	end
-end )
-
-hook.Add( "PlayerButtonUp", "SCOREBOARD::ButtonUp", function( ply, key )
-	if key == MOUSE_RIGHT then
-		CanCall = true
-	end
-end )
+	cmd:RemoveKey(IN_ATTACK)
+	cmd:RemoveKey(IN_ATTACK2)
+end)
